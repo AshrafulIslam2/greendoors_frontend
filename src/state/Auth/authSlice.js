@@ -1,5 +1,6 @@
 // features/auth/authSlice.js
 import baseQuery from "@/service/baseQuery";
+import { createApi } from "@reduxjs/toolkit/query";
 
 // export const authSlice = createSlice({
 //   name: "auth", // ✅ correct key

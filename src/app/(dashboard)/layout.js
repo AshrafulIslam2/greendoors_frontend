@@ -1,10 +1,15 @@
-// import { Providers } from "@/component/provider";
+import Navbar from "@/component/shared/Navbar";
+
+import Sidebar from "@/component/shared/Sidebar";
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="relative h-screen">
-      <h1>This the dashboard</h1>
-      {children}
+    <div className="relative h-screen flex  overflow-hidden">
+      <Sidebar />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Navbar />
+        {children}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/component/provider";
+import { SessionProvider } from "next-auth/react";
 
 const poppins = Poppins({
   variable: "--font-Poppins",
@@ -17,7 +18,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${poppins.variable} m-0 p-0 antialiased`}>
-        <div className="relative h-screen">{children}</div>
+        <SessionProvider>
+          {" "}
+          <Providers>
+            <div className="relative h-screen">{children}</div>
+          </Providers>
+        </SessionProvider>
       </body>
     </html>
   );
