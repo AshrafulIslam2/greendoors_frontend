@@ -15,9 +15,9 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 const sidebarItems = [
   { icon: Home, label: "Dashboard", href: "/dashboard", active: true },
-  { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
+  { icon: BarChart3, label: "Members", href: "/dashboard/analytics" },
   { icon: Users, label: "Users", href: "/dashboard/users" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+  { icon: Settings, label: "Deposit", href: "/dashboard/settings" },
 ];
 const Sidebar = () => {
   const dispatch = useDispatch();
