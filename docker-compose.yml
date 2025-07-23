@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web-practice
+    restart: always
+    ports:
+      - "3000:3000"
+    develop:
+      # we specify the files to watch for changes
+      watch:
+        # it'll watch for changes in package.json and package-lock.json and rebuild the container if there are any changes
+        - path: ./package.json
+          action: rebuild
+        - path: ./package-lock.json
+          action: rebuild
+        - path: ./next_config.js
+          action: rebuild
+        # it'll watch for changes in the frontend directory and sync the changes with the container real time
+        - path: .
+          target: /app
+          action: sync
+    # volumes:
+    #   - .:/app        # 🚀 Better volume syncing
+    #   - /app/node_modules    # Prevent node_modules conflict
+    networks:
+      - web
+    command: npm run dev
+networks:
+  web:
