@@ -9,6 +9,7 @@ import {
   BarChart3,
   Users,
   Settings,
+  LogIn,
   Menu,
   X,
   Bell,
@@ -40,7 +41,7 @@ export default function Navbar() {
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const companyName = "Green Doors";
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 overflow-hidden ">
+    <nav className="bg-white shadow-sm border-b border-gray-200  z-50  sticky top-0 ">
       <div className="flex items-center justify-between h-16 px-6">
         <div className="flex items-center">
           <button
@@ -66,18 +67,32 @@ export default function Navbar() {
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
-          <div className="flex items-center md:space-x-3">
+          <div className="">
             {session?.user ? (
               <>
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-gray-600" />
-                </div>
-                <div className="hidden md:block">
-                  <p className="text-2xl font-extrabold text-gray-900">
-                    {getInitials(session.user.name)}
-                  </p>
-                  <p className="text-xs text-gray-500">{session.user.role}</p>
-                </div>
+                <Link
+                  href="/profile"
+                  className="flex items-center md:space-x-3"
+                >
+                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                    {session.user.profileImage ? (
+                      <Image
+                        src={session.user.profileImage}
+                        alt={session.user.name}
+                        width={50}
+                        height={50}
+                      />
+                    ) : (
+                      <User className="w-4 h-4 text-gray-600" />
+                    )}
+                  </div>
+                  <div className="hidden md:block">
+                    <p className="text-2xl font-extrabold text-gray-900">
+                      {getInitials(session.user.name)}
+                    </p>
+                    <p className="text-xs text-gray-500">{session.user.role}</p>
+                  </div>
+                </Link>
               </>
             ) : (
               <button
@@ -91,7 +106,7 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </header>
+    </nav>
     // <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50">
     //   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     //     <div className="flex justify-between h-16 items-center">

@@ -6,9 +6,9 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="relative h-screen flex  overflow-hidden">
       <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-y-scroll ">
         <Navbar />
-        {children}
+        <div>{children}</div>
       </div>
     </div>
   );
