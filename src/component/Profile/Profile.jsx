@@ -209,7 +209,7 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
               </div>
             </div>
             {/* Nominee Information */}
-            <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-3xl p-8 shadow-xl shadow-black/5">
+            <div className="bg-white/70 backdrop-blur-sm border mt-8 border-white/20 rounded-3xl p-8 shadow-xl shadow-black/5">
               <button
                 type="button"
                 className="absolute top-4 right-4 inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition"
