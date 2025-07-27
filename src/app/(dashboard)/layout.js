@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }) {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-y-scroll ">
         <Navbar />
-        <div>{children}</div>
+        {children}
       </div>
     </div>
   );

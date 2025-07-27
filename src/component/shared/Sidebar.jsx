@@ -5,22 +5,26 @@ import {
   Home,
   BarChart3,
   Users,
-  Settings,
+  Banknote,
   X,
   User,
   LogOut,
+  FolderKanban, // <-- add this import
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+
+// Updated icons for sidebar items
 const sidebarItems = [
   { icon: Home, label: "Dashboard", href: "/dashboard" },
-  { icon: BarChart3, label: "Members", href: "/members" },
-  { icon: Users, label: "Users", href: "/users" },
-  { icon: Settings, label: "Deposit", href: "deposit" },
+  { icon: Users, label: "Members", href: "/members" },
+  { icon: FolderKanban, label: "Projects", href: "/projects" }, // <-- updated icon
+  { icon: Banknote, label: "Deposit", href: "/deposit" },
 ];
+
 const Sidebar = () => {
   const dispatch = useDispatch();
   const pathname = usePathname();
@@ -75,6 +79,7 @@ const Sidebar = () => {
                           : "text-gray-300 hover:bg-gray-800 hover:text-white"
                       }
                     `}
+                    onClick={() => dispatch(closeSidebar())} // <-- close sidebar on click
                   >
                     <Icon className="w-5 h-5 mr-3" />
                     {item.label}
