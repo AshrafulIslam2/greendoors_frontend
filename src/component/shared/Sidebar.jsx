@@ -11,16 +11,19 @@ import {
   LogOut,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 const sidebarItems = [
-  { icon: Home, label: "Dashboard", href: "/dashboard", active: true },
+  { icon: Home, label: "Dashboard", href: "/dashboard" },
   { icon: BarChart3, label: "Members", href: "/members" },
-  { icon: Users, label: "Users", href: "/dashboard/users" },
-  { icon: Settings, label: "Deposit", href: "/dashboard/settings" },
+  { icon: Users, label: "Users", href: "/users" },
+  { icon: Settings, label: "Deposit", href: "deposit" },
 ];
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const pathname = usePathname();
   const isOpen = useSelector((state) => state.sidebar.isSidebarOpen);
   return (
     <>
@@ -59,14 +62,15 @@ const Sidebar = () => {
           <ul className="space-y-2">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
+              const isActive = pathname.startsWith(item.href); // ✅ match
               return (
                 <li key={item.label}>
-                  <a
+                  <Link
                     href={item.href}
                     className={`
                       flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
                       ${
-                        item.active
+                        isActive
                           ? "bg-blue-600 text-white shadow-lg"
                           : "text-gray-300 hover:bg-gray-800 hover:text-white"
                       }
@@ -74,7 +78,7 @@ const Sidebar = () => {
                   >
                     <Icon className="w-5 h-5 mr-3" />
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               );
             })}

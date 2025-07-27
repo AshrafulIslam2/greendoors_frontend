@@ -24,11 +24,11 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.push("/login");
+  //   }
+  // }, [status, router]);
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.sidebar.isSidebarOpen);
   const [dropdownOpen, setDropdownOpen] = useState(false);
