@@ -12,6 +12,7 @@ import {
 import AddMember from "@/component/Members/AddMember";
 import Model from "@/component/shared/Model";
 import AddMemberForm from "@/component/Members/AddMemberForm";
+
 const members = [
   {
     id: "M001",
@@ -70,7 +71,7 @@ const members = [
 ];
 const page = () => (
   <>
-    <div className="h-[inherit] bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="h-[inherit] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="max-w-7xl h-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
         <div className="mb-8 flex  flex-col  items-start sm:flex-row justify-between sm:items-center">
@@ -90,35 +91,9 @@ const page = () => (
           <AddMember />
         </div>
 
-        {/* Search and Filter Bar */}
-        {/* <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-3xl p-6 mb-8 shadow-xl shadow-black/5"> */}
-        {/* <div className="flex flex-col lg:flex-row gap-4"> */}
-        {/* Search Input */}
-        {/* <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search members by name, ID, or email..."
-                className="w-full pl-12 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-              />
-            </div> */}
-
-        {/* Filter Buttons */}
-        {/* <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-2xl hover:from-blue-100 hover:to-purple-100 transition-all duration-300">
-                <Filter className="w-4 h-4 text-blue-600" />
-                <span className="text-blue-700 font-semibold">Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-6 py-3 bg-gray-50/50 border border-gray-200 rounded-2xl hover:bg-gray-100 transition-all duration-300">
-                <Grid className="w-4 h-4 text-gray-600" />
-              </button>
-            </div> */}
-        {/* </div> */}
-        {/* </div> */}
-
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
+          <div className="bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">
@@ -134,7 +109,7 @@ const page = () => (
             </div>
           </div>
 
-          <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
+          <div className="bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">Active</p>
@@ -146,21 +121,7 @@ const page = () => (
             </div>
           </div>
 
-          {/* <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-500">
-            New This Month
-          </p>
-          <p className="text-3xl font-bold text-gray-900">12</p>
-        </div>
-        <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-          <User className="w-6 h-6 text-white" />
-        </div>
-      </div>
-    </div> */}
-
-          <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-lg">
+          <div className="bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-6 shadow-lg">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">
@@ -180,7 +141,7 @@ const page = () => (
           {members.map((member) => (
             <div
               key={member.id}
-              className="group bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl p-4 shadow-lg shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-300 hover:-translate-y-1"
+              className="group bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-4 shadow-lg hover:shadow-xl hover:shadow-black/10 transition-all duration-300 hover:-translate-y-1"
             >
               {/* Profile Image */}
               <div className="relative mb-4">
@@ -218,7 +179,6 @@ const page = () => (
                 <div className="flex items-center gap-2 p-2 bg-gray-50/50 rounded-lg">
                   <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
-                    {/* <p className="text-xs font-medium text-gray-500">Phone</p> */}
                     <p className="text-xs font-semibold text-gray-900 truncate">
                       {member.phone}
                     </p>
@@ -228,7 +188,6 @@ const page = () => (
                 <div className="flex items-center gap-2 p-2 bg-gray-50/50 rounded-lg">
                   <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
-                    {/* <p className="text-xs font-medium text-gray-500">Email</p> */}
                     <p className="text-xs font-semibold text-gray-900 truncate">
                       {member.email}
                     </p>
@@ -241,7 +200,7 @@ const page = () => (
 
         {/* Load More Button */}
         <div className="mt-12 text-center">
-          <button className="px-8 py-4 bg-white/70 backdrop-blur-sm border border-gray-200 text-gray-700 font-semibold rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300">
+          <button className="px-8 py-4 bg-white/90 backdrop-blur-sm border border-gray-200 text-gray-700 font-semibold rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300">
             Load More Members
           </button>
         </div>

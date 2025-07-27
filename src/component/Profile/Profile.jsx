@@ -15,20 +15,26 @@ import {
 import { useDispatch } from "react-redux";
 import { openModle } from "@/state/helper_slice/modelOpenSlice";
 import Model from "@/component/shared/Model";
+import EditPersonalInformationForm from "./EditPersonalInformationForm";
+import EditNomineeInformationForm from "./EditNomineeInformationForm";
+// <-- import your nominee form
 
 const Profile = ({ personalInfo, nominee, member, role }) => {
   const dispatch = useDispatch();
   const [modalTitle, setModalTitle] = useState("Edit Personal Information");
+  const [modalType, setModalType] = useState("personal"); // 'personal' or 'nominee'
 
   // Handler for Personal Info Edit
   const handleEditPersonalInfo = () => {
     setModalTitle("Edit your personal information");
+    setModalType("personal");
     dispatch(openModle());
   };
 
   // Handler for Nominee Info Edit
   const handleEditNomineeInfo = () => {
     setModalTitle("Edit nominee information");
+    setModalType("nominee");
     dispatch(openModle());
   };
 
@@ -395,7 +401,13 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
         </div>
       </div>
       {/* Shared Modal */}
-      <Model modelTitle={modalTitle} />
+      <Model modelTitle={modalTitle}>
+        {modalType === "personal" ? (
+          <EditPersonalInformationForm />
+        ) : (
+          <EditNomineeInformationForm />
+        )}
+      </Model>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isModelOpen: true,
+  isModelOpen: false,
 };
 const modelOpenSlice = createSlice({
   name: "modelOpen",

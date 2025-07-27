@@ -56,20 +56,29 @@ const Model = ({ children, modelTitle }) => {
         >
           <div
             ref={modalRef}
-            className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-md"
-            onClick={(e) => e.stopPropagation()} // prevents closing when clicking inside
+            className="relative bg-white p-0 rounded-lg shadow-lg w-full max-w-md max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={handleClose}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black transition bg-gradient-to-tr from-red-500 to-red-700 p-1 rounded-full"
-              aria-label="Close modal"
+            {/* Header: sticky for mobile */}
+            <div className="sticky top-0 z-10 bg-white px-6 pt-6 pb-2 flex items-center justify-between rounded-t-lg border-b border-gray-400">
+              <h1 className="text-lg font-semibold text-gray-800">
+                {modelTitle || "Add Member"}
+              </h1>
+              <button
+                onClick={handleClose}
+                className="text-gray-500 hover:text-black transition bg-gradient-to-tr from-red-500 to-red-700 p-1 rounded-full"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+            {/* Scrollable content */}
+            <div
+              className="overflow-y-auto px-6 pb-6 pt-2"
+              style={{ maxHeight: "calc(90vh - 56px)" }}
             >
-              <X className="w-5 h-5 text-white" />
-            </button>
-            <h1 className="text-lg font-semibold text-gray-800 mb-4">
-              {modelTitle || "Add Member"}
-            </h1>
-            {children}
+              {children}
+            </div>
           </div>
         </div>
       )}

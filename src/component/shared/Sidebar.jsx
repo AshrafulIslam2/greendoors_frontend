@@ -9,7 +9,7 @@ import {
   X,
   User,
   LogOut,
-  FolderKanban, // <-- add this import
+  FolderKanban,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -19,16 +19,24 @@ import { useDispatch, useSelector } from "react-redux";
 
 // Updated icons for sidebar items
 const sidebarItems = [
-  { icon: Home, label: "Dashboard", href: "/dashboard" },
+  { icon: BarChart3, label: "Dashboard", href: "/dashboard" },
   { icon: Users, label: "Members", href: "/members" },
-  { icon: FolderKanban, label: "Projects", href: "/projects" }, // <-- updated icon
-  { icon: Banknote, label: "Deposit", href: "/deposit" },
+  { icon: Home, label: "Home", href: "/" }, // Use Home icon for Home
+  { icon: Banknote, label: "Deposit", href: "/deposits" },
 ];
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const pathname = usePathname();
   const isOpen = useSelector((state) => state.sidebar.isSidebarOpen);
+
+  // Only one active at a time: Dashboard if /dashboard, Home if exactly /
+  const getIsActive = (href) => {
+    if (href === "/dashboard") return pathname === "/dashboard";
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href) && href !== "/";
+  };
+
   return (
     <>
       {isOpen && (
@@ -66,7 +74,7 @@ const Sidebar = () => {
           <ul className="space-y-2">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname.startsWith(item.href); // ✅ match
+              const isActive = getIsActive(item.href);
               return (
                 <li key={item.label}>
                   <Link
@@ -79,7 +87,7 @@ const Sidebar = () => {
                           : "text-gray-300 hover:bg-gray-800 hover:text-white"
                       }
                     `}
-                    onClick={() => dispatch(closeSidebar())} // <-- close sidebar on click
+                    onClick={() => dispatch(closeSidebar())}
                   >
                     <Icon className="w-5 h-5 mr-3" />
                     {item.label}
