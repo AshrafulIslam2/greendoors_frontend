@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { closeModel } from "@/state/helper_slice/modelOpenSlice";
 import gsap from "gsap";
 
-const Model = () => {
+const Model = ({ children }) => {
   const isModelOpen = useSelector((state) => state.model.isModelOpen);
   const dispatch = useDispatch();
   const overlayRef = useRef(null);
@@ -69,7 +69,8 @@ const Model = () => {
             <h1 className="text-lg font-semibold text-gray-800 mb-4">
               Add New Member
             </h1>
-            <form className="space-y-4">
+            {children}
+            {/* <form className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Member ID
@@ -135,7 +136,7 @@ const Model = () => {
               >
                 Add Member
               </button>
-            </form>
+            </form> */}
           </div>
         </div>
       )}

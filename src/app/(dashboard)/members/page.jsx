@@ -10,7 +10,8 @@ import {
   List,
 } from "lucide-react";
 import AddMember from "@/component/Members/AddMember";
-import Model from "@/component/Members/Model";
+import Model from "@/component/shared/Model";
+import AddMemberForm from "@/component/Members/AddMemberForm";
 const members = [
   {
     id: "M001",
@@ -246,7 +247,9 @@ const page = () => (
         </div>
       </div>
     </div>
-    <Model />
+    <Model>
+      <AddMemberForm />
+    </Model>
   </>
 );
 
