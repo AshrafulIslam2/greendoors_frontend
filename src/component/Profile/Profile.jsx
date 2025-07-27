@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   User,
   Phone,
@@ -11,7 +12,26 @@ import {
   Image as ImageIcon,
   AlertCircle,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { openModle } from "@/state/helper_slice/modelOpenSlice";
+import Model from "@/component/shared/Model";
+
 const Profile = ({ personalInfo, nominee, member, role }) => {
+  const dispatch = useDispatch();
+  const [modalTitle, setModalTitle] = useState("Edit Personal Information");
+
+  // Handler for Personal Info Edit
+  const handleEditPersonalInfo = () => {
+    setModalTitle("Edit your personal information");
+    dispatch(openModle());
+  };
+
+  // Handler for Nominee Info Edit
+  const handleEditNomineeInfo = () => {
+    setModalTitle("Edit nominee information");
+    dispatch(openModle());
+  };
+
   return (
     <div className="bg-gradient-to-br from-slate-50 via-white to-slate-100 ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -88,11 +108,11 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
         </div>
         <div className="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <div className="xl:col-span-2">
-            <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-3xl p-8 shadow-xl shadow-black/5">
+            <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-3xl p-8 shadow-xl shadow-black/5 relative">
               <button
                 type="button"
                 className="absolute top-4 right-4 inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition"
-                // onClick={() => console.log("Edit personal info")}
+                onClick={handleEditPersonalInfo}
               >
                 <Pencil className="w-4 h-4" />
                 Edit
@@ -209,11 +229,11 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
               </div>
             </div>
             {/* Nominee Information */}
-            <div className="bg-white/70 backdrop-blur-sm border mt-8 border-white/20 rounded-3xl p-8 shadow-xl shadow-black/5">
+            <div className="bg-white/70 backdrop-blur-sm border mt-8 border-white/20 rounded-3xl p-8 shadow-xl shadow-black/5 relative">
               <button
                 type="button"
                 className="absolute top-4 right-4 inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition"
-                // onClick={() => console.log("Edit personal info")}
+                onClick={handleEditNomineeInfo}
               >
                 <Pencil className="w-4 h-4" />
                 Edit
@@ -374,6 +394,8 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
           </div>
         </div>
       </div>
+      {/* Shared Modal */}
+      <Model modelTitle={modalTitle} />
     </div>
   );
 };

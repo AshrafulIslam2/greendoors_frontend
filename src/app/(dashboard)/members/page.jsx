@@ -247,7 +247,7 @@ const page = () => (
         </div>
       </div>
     </div>
-    <Model>
+    <Model modelTitle="Add New Member">
       <AddMemberForm />
     </Model>
   </>
