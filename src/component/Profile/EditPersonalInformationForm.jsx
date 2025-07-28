@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+"use client";
+import React, { use, useRef, useState } from "react";
 import {
   User,
   Phone,
@@ -9,6 +10,12 @@ import {
   MapPin,
   Image as ImageIcon,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { closeModel } from "@/state/helper_slice/modelOpenSlice";
+
+import { updateUserPersonalInfo } from "@/lib/update-personal-information";
 
 const initialState = {
   name: "",
@@ -27,30 +34,122 @@ const initialState = {
 const inputClass =
   "pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 bg-gray-50 w-full";
 
-const EditPersonalInformationForm = ({ onSubmit, defaultValues = {} }) => {
+const EditPersonalInformationForm = ({ defaultValues = {} }) => {
   const [form, setForm] = useState({ ...initialState, ...defaultValues });
+  const dispatch = useDispatch();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: session, status, update } = useSession();
+  const formRef = useRef(null);
 
+  console.log("🚀 ~ EditPersonalInformationForm ~ session:", session);
   const handleChange = (e) => {
     const { name, value, files, type } = e.target;
+    if (type === "file" && files[0]) {
+      const file = files[0];
+      const maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+      if (file.size > maxFileSize) {
+        toast.error(
+          `${
+            name === "ProfileImage"
+              ? "Profile image"
+              : name === "nidImageFrontPart"
+              ? "Front NID image"
+              : "Back NID image"
+          } exceeds 2MB limit.`
+        );
+        e.target.value = ""; // Clear the input
+        return;
+      }
+    }
     setForm((prev) => ({
       ...prev,
       [name]: type === "file" ? files[0] : value,
     }));
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
+    const maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+    setIsSubmitting(true);
+    // Validate file sizes again (redundant but ensures robustness)
+    if (form.ProfileImage && form.ProfileImage.size > maxFileSize) {
+      toast.error("Profile image exceeds 2MB limit.");
+      return;
+    }
+    if (form.nidImageFrontPart && form.nidImageFrontPart.size > maxFileSize) {
+      toast.error("Front NID image exceeds 2MB limit.");
+      return;
+    }
+    if (form.nidImageBackPart && form.nidImageBackPart.size > maxFileSize) {
+      toast.error("Back NID image exceeds 2MB limit.");
+      return;
+    }
+
+    // Append form data
     Object.entries(form).forEach(([key, value]) => {
+      if (key === "dob" && !value) {
+        return; // Skip empty dob
+      }
+      if (!value) {
+        return; // Skip empty values
+      }
       if (value !== null && value !== undefined) {
-        formData.append(key, value);
+        // Special handling for date field
+        if (key === "dob" && value) {
+          // Convert date string to ISO format for proper backend handling
+          const dateValue = new Date(value).toISOString();
+          formData.append(key, dateValue);
+        } else {
+          formData.append(key, value);
+        }
       }
     });
-    if (onSubmit) onSubmit(formData);
+
+    try {
+      const result = await updateUserPersonalInfo(
+        formData,
+        session?.accessToken || ""
+      );
+      if (result?.success) {
+        console.log("Success:", result.data);
+        setIsSubmitting(false);
+        toast.success("Personal information updated successfully");
+        // Update the session with the complete updated user data
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            // Update specific fields that were changed
+            name: result.data?.name || session.user.name,
+            profileImage:
+              result.data?.profileImage || session.user.profileImage,
+            userPersonalInfo:
+              result.data?.userPersonalInfo || session.user.userPersonalInfo,
+            // Add any other fields that might have been updated
+          },
+        }); // Update session
+        setForm(initialState);
+        formRef.current?.reset();
+        dispatch(closeModel());
+      } else {
+        console.log("result=======", result);
+        throw new Error(result?.error || "Unknown error occurred");
+      }
+    } catch (error) {
+      console.error("Error:", error.response);
+      setIsSubmitting(false);
+      const errorMessage =
+        error.response?.data?.message ||
+        (error.message === "Request failed with status code 413"
+          ? "File size exceeds the 2MB limit. Please upload smaller files."
+          : "Failed to update personal information.");
+      toast.error(errorMessage);
+    }
   };
 
   return (
     <form
+      ref={formRef}
       className="grid grid-cols-1 md:grid-cols-2 gap-8"
       onSubmit={handleSubmit}
       encType="multipart/form-data"
@@ -213,7 +312,7 @@ const EditPersonalInformationForm = ({ onSubmit, defaultValues = {} }) => {
           type="submit"
           className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow hover:scale-[1.02] transition-all duration-300"
         >
-          Save Changes
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </form>

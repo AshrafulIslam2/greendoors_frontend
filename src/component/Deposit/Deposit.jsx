@@ -5,7 +5,7 @@ import Link from "next/link";
 import Model from "../shared/Model";
 import AddDepositForm from "./AddDepositForm";
 import { useDispatch, useSelector } from "react-redux";
-import { openModle, closeModel } from "@/state/helper_slice/modelOpenSlice";
+import { openModel, closeModel } from "@/state/helper_slice/modelOpenSlice";
 
 const mockDeposits = Array.from({ length: 60 }).map((_, i) => ({
   id: i + 1,
@@ -47,7 +47,7 @@ const Deposit = () => {
         </h2>
         <button
           className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow hover:scale-105 transition"
-          onClick={() => dispatch(openModle())}
+          onClick={() => dispatch(openModel())}
         >
           <PlusCircle className="w-5 h-5" /> Add Deposit
         </button>

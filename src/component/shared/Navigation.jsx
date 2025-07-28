@@ -1,9 +1,8 @@
-import { auth } from "@/auth";
-import Profile from "@/component/Profile/Profile";
-import { redirect } from "next/navigation";
 import React from "react";
+import Navbar from "./Navbar";
+import { auth } from "@/auth";
 
-const Page = async () => {
+const Navigation = async () => {
   const session = await auth();
 
   // Redirect to /login if no session or accessToken
@@ -15,6 +14,7 @@ const Page = async () => {
   let member = null;
   let role = null;
   let error = null;
+  let data = null;
 
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/me`, {
@@ -32,27 +32,17 @@ const Page = async () => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.json();
+    data = await response.json();
     ({ personalInfo, nominee, member, role } = data || {});
   } catch (err) {
     console.error("Fetch error:", err.message);
     error = "Failed to load user data. Please try again later.";
   }
-
   return (
     <>
-      {error ? (
-        <div className="error-message">{error}</div>
-      ) : (
-        <Profile
-          personalInfo={personalInfo}
-          nominee={nominee}
-          member={member}
-          role={role}
-        />
-      )}
+      <Navbar data={data} />
     </>
   );
 };
 
-export default Page;
+export default Navigation;

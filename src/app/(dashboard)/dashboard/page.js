@@ -9,7 +9,7 @@ import {
   Settings as SettingsIcon,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { openModle, closeModel } from "@/state/helper_slice/modelOpenSlice";
+import { openModel, closeModel } from "@/state/helper_slice/modelOpenSlice";
 import Model from "@/component/shared/Model";
 import AddDepositForm from "@/component/Deposit/AddDepositForm";
 import AddMemberForm from "@/component/Members/AddMemberForm";
@@ -205,7 +205,7 @@ export default function Home() {
       color: "from-green-500 to-green-600",
       onClick: () => {
         setModalType("deposit");
-        dispatch(openModle());
+        dispatch(openModel());
       },
     },
     {
@@ -214,7 +214,7 @@ export default function Home() {
       color: "from-blue-500 to-blue-600",
       onClick: () => {
         setModalType("member");
-        dispatch(openModle());
+        dispatch(openModel());
       },
     },
     {

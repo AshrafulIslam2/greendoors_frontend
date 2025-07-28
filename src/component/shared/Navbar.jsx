@@ -1,5 +1,4 @@
 "use client";
-
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -20,7 +19,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { openSidebar } from "@/state/helper_slice/sidebarSlice";
 import { useRouter } from "next/navigation";
 
-export default function Navbar() {
+export default function Navbar({ data }) {
+  console.log("🚀 ~ Navbar ~ response:", data);
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -41,7 +41,7 @@ export default function Navbar() {
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const companyName = "Green Doors";
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200  z-50  sticky top-0 ">
+    <nav className="bg-white shadow-sm border-b border-gray-200  z-30  sticky top-0 ">
       <div className="flex items-center justify-between h-16 px-6">
         <div className="flex items-center">
           <button
@@ -75,9 +75,9 @@ export default function Navbar() {
                   className="flex items-center md:space-x-3"
                 >
                   <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    {session.user.profileImage ? (
+                    {data?.personalInfo?.ProfileImage ? (
                       <Image
-                        src={session.user.profileImage}
+                        src={data?.personalInfo?.ProfileImage}
                         alt={session.user.name}
                         width={50}
                         height={50}
@@ -88,7 +88,7 @@ export default function Navbar() {
                   </div>
                   <div className="hidden md:block">
                     <p className="text-2xl font-extrabold text-gray-900">
-                      {getInitials(session.user.name)}
+                      {getInitials(data?.name)}
                     </p>
                     <p className="text-xs text-gray-500">{session.user.role}</p>
                   </div>

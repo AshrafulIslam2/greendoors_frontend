@@ -1,5 +1,5 @@
 "use client";
-import { openModle } from "@/state/helper_slice/modelOpenSlice";
+import { openModel } from "@/state/helper_slice/modelOpenSlice";
 import React from "react";
 import { useDispatch } from "react-redux";
 
@@ -12,7 +12,7 @@ function AddMember() {
 
   const dispatch = useDispatch();
   const handleOpen = () => {
-    dispatch(openModle());
+    dispatch(openModel());
     // Logic to open the model
     console.log("Model opened");
   };

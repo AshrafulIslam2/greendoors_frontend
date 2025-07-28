@@ -7,7 +7,7 @@ const modelOpenSlice = createSlice({
   name: "modelOpen",
   initialState,
   reducers: {
-    openModle: (state) => {
+    openModel: (state) => {
       state.isModelOpen = true;
     },
     closeModel: (state) => {
@@ -18,5 +18,5 @@ const modelOpenSlice = createSlice({
     },
   },
 });
-export const { openModle, closeModel, toggleModel } = modelOpenSlice.actions;
+export const { openModel, closeModel, toggleModel } = modelOpenSlice.actions;
 export default modelOpenSlice.reducer;

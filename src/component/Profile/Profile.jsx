@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   User,
   Phone,
@@ -13,7 +13,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { openModle } from "@/state/helper_slice/modelOpenSlice";
+import { openModel } from "@/state/helper_slice/modelOpenSlice";
 import Model from "@/component/shared/Model";
 import EditPersonalInformationForm from "./EditPersonalInformationForm";
 import EditNomineeInformationForm from "./EditNomineeInformationForm";
@@ -23,19 +23,31 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
   const dispatch = useDispatch();
   const [modalTitle, setModalTitle] = useState("Edit Personal Information");
   const [modalType, setModalType] = useState("personal"); // 'personal' or 'nominee'
+  const fileInputRef = useRef(null);
 
+  const handleEditClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Handle file upload logic here
+      console.log("Selected file:", file);
+    }
+  };
   // Handler for Personal Info Edit
   const handleEditPersonalInfo = () => {
     setModalTitle("Edit your personal information");
     setModalType("personal");
-    dispatch(openModle());
+    dispatch(openModel());
   };
 
   // Handler for Nominee Info Edit
   const handleEditNomineeInfo = () => {
     setModalTitle("Edit nominee information");
     setModalType("nominee");
-    dispatch(openModle());
+    dispatch(openModel());
   };
 
   return (
@@ -58,7 +70,7 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
           <div className="flex flex-col sm:flex-row lg:items-center gap-8">
             {/* Profile Image */}
             <div className="">
-              <div className="w-40 h-40  relative group rounded-3xl bg-gradient-to-br from-blue-100 to-purple-100 p-1">
+              <div className="w-40 h-40 relative group rounded-3xl bg-gradient-to-br from-blue-100 to-purple-100 p-1">
                 <img
                   src={
                     personalInfo?.ProfileImage ||
@@ -67,6 +79,25 @@ const Profile = ({ personalInfo, nominee, member, role }) => {
                   alt="Profile"
                   className="w-full h-full rounded-3xl object-cover"
                 />
+
+                {/* Edit Button on Hover */}
+                <button
+                  onClick={handleEditClick}
+                  className="absolute inset-0 bg-black/40 rounded-3xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Pencil className="w-6 h-6 text-white" />
+                </button>
+
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+
+                {/* Badge */}
                 <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center border-4 border-white shadow-lg">
                   <Award className="w-5 h-5 text-white" />
                 </div>

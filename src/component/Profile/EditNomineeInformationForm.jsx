@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   User,
   Phone,
@@ -10,6 +10,11 @@ import {
   Image as ImageIcon,
   Mail,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import { closeModel } from "@/state/helper_slice/modelOpenSlice";
+import { updateUserNomineeInfo } from "@/lib/update-nominee-information";
 
 const initialState = {
   name: "",
@@ -29,6 +34,10 @@ const inputClass =
 
 const EditNomineeInformationForm = ({ onSubmit, defaultValues = {} }) => {
   const [form, setForm] = useState({ ...initialState, ...defaultValues });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
+  const { data: session, status, update } = useSession();
+  const formRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value, files, type } = e.target;
@@ -38,19 +47,71 @@ const EditNomineeInformationForm = ({ onSubmit, defaultValues = {} }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const formData = new FormData();
+    const maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+
+    // Validate file sizes before appending
+    if (form.nidImageFrontPart && form.nidImageFrontPart.size > maxFileSize) {
+      toast.error("Front NID image exceeds 2MB limit.");
+      return;
+    }
+    if (form.nidImageBackPart && form.nidImageBackPart.size > maxFileSize) {
+      toast.error("Back NID image exceeds 2MB limit.");
+      return;
+    }
     Object.entries(form).forEach(([key, value]) => {
+      if (!value) {
+        return;
+      }
       if (value !== null && value !== undefined) {
-        formData.append(key, value);
+        // Special handling for date field
+        if (key === "dob" && value) {
+          // Convert date string to ISO format for proper backend handling
+          const dateValue = new Date(value).toISOString();
+          formData.append(key, dateValue);
+        } else {
+          formData.append(key, value);
+        }
       }
     });
-    if (onSubmit) onSubmit(formData);
+    try {
+      console.log(formData.get("nidImageFrontPart"));
+      const result = await updateUserNomineeInfo(
+        formData,
+        session?.accessToken || ""
+      );
+
+      if (result?.success) {
+        console.log("Success:", result.data);
+        toast.success("Nominee information updated successfully");
+        setIsSubmitting(false);
+        // Update the session with the complete updated user data
+        await update({ user: result.data?.name }); // Update session
+        setForm(initialState);
+        formRef.current?.reset();
+        dispatch(closeModel());
+      } else {
+        console.log("result=======", result);
+        throw new Error(result?.error || "Unknown error occurred");
+      }
+    } catch (error) {
+      console.error("Error:", error.response);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message === "Request failed with status code 413"
+          ? "File size exceeds the 2MB limit. Please upload smaller files."
+          : "Failed to update personal information.";
+      setIsSubmitting(false);
+      toast.error(errorMessage);
+    }
   };
 
   return (
     <form
+      ref={formRef}
       className="grid grid-cols-1 md:grid-cols-2 gap-8"
       onSubmit={handleSubmit}
       encType="multipart/form-data"
@@ -215,7 +276,7 @@ const EditNomineeInformationForm = ({ onSubmit, defaultValues = {} }) => {
           type="submit"
           className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow hover:scale-[1.02] transition-all duration-300"
         >
-          Save Changes
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </form>
