@@ -17,7 +17,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} m-0 p-0 antialiased`}>
+      <body
+        className={`${poppins.variable} m-0 p-0 antialiased`}
+        cz-shortcut-listen="true"
+      >
         <SessionProvider>
           {" "}
           <Providers>

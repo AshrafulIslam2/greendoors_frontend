@@ -44,6 +44,26 @@ export const userApiSlice = createApi({
           return response;
         },
       }),
+      deleteUser: builder.mutation({
+        query: ({ userId, reason }) => ({
+          url: `/user/${userId}`,
+          method: "DELETE",
+          body: { reason },
+        }),
+        invalidatesTags: (result, error, arg) => [
+          { type: "User", id: "LIST" },
+          { type: "User", id: arg.userId },
+          "Member",
+        ],
+        transformResponse: (response) => {
+          console.log("✅ Delete User Response:", response);
+          return response;
+        },
+        transformErrorResponse: (response) => {
+          console.error("❌ Delete User Error:", response);
+          return response;
+        },
+      }),
     };
   },
 });
@@ -52,4 +72,5 @@ export const {
   useGetUserInfoQuery,
   useLazyGetUserInfoQuery, // This is what you need for load more
   useCreateMemberMutation,
+  useDeleteUserMutation,
 } = userApiSlice;

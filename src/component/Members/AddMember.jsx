@@ -3,7 +3,7 @@ import { openModel } from "@/state/helper_slice/modelOpenSlice";
 import React from "react";
 import { useDispatch } from "react-redux";
 
-function AddMember() {
+function AddMember({ setModalType }) {
   const handleClose = () => {
     // Logic to close the model
 
@@ -12,6 +12,7 @@ function AddMember() {
 
   const dispatch = useDispatch();
   const handleOpen = () => {
+    setModalType("Add New Member");
     dispatch(openModel());
     // Logic to open the model
     console.log("Model opened");

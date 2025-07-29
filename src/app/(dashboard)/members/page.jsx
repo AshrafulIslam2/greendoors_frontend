@@ -1,24 +1,66 @@
 "use client";
 import React, { useState, useCallback, useEffect } from "react";
-import { User, Phone, Mail, Droplets, Loader2 } from "lucide-react";
+import { User, Phone, Mail, Droplets, Loader2, Trash2 } from "lucide-react";
 import AddMember from "@/component/Members/AddMember";
 import Model from "@/component/shared/Model";
 import AddMemberForm from "@/component/Members/AddMemberForm";
 import {
+  useDeleteUserMutation,
   useGetUserInfoQuery,
   useLazyGetUserInfoQuery,
 } from "@/state/user/userSlice";
 import { useSession } from "next-auth/react";
+import MemberCard from "@/component/Members/MemberCard";
+import { set } from "zod";
+import { useDispatch } from "react-redux";
+import { closeModel } from "@/state/helper_slice/modelOpenSlice";
+import { toast } from "react-toastify";
 
 const ITEMS_PER_PAGE = 10;
 
 const page = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [modalType, setModalType] = useState("Add New Member");
+  const dispatch = useDispatch();
+  const [deletedMemberDetails, setDeletedMemberDetails] = useState({});
   const [allMembers, setAllMembers] = useState([]);
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
   const [hasMoreData, setHasMoreData] = useState(true);
 
   const { data: session, status } = useSession();
+  const [deleteReason, setDeleteReason] = useState("");
 
+  const handleCloseModal = () => {
+    dispatch(closeModel());
+    setDeleteReason("");
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteReason.trim()) {
+      toast.error("Please provide a reason for deletion");
+      return;
+    }
+    console.log("ashraful");
+    try {
+      const result = await deleteUser({
+        userId: deletedMemberDetails?.id,
+        reason: deleteReason.trim(),
+      }).unwrap();
+
+      toast.success(result.message || "Member deleted successfully");
+      handleCloseModal();
+    } catch (error) {
+      console.error("Delete failed:", error);
+
+      // Handle different error types
+      const errorMessage =
+        error?.data?.message ||
+        error?.message ||
+        "Failed to delete member. Please try again.";
+
+      toast.error(errorMessage);
+    }
+  };
   // Initial load
   const {
     data: initialMembers,
@@ -164,7 +206,9 @@ const page = () => {
                 Browse all registered members
               </p>
             </div>
-            {session?.user?.role === "SUPER_ADMIN" && <AddMember />}
+            {session?.user?.role === "SUPER_ADMIN" && (
+              <AddMember setModalType={setModalType} />
+            )}
           </div>
 
           {/* Stats Cards */}
@@ -225,73 +269,13 @@ const page = () => {
           {/* Member Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4">
             {allMembers?.map((member) => (
-              <div
+              <MemberCard
+                member={member}
+                setDeletedMemberDetails={setDeletedMemberDetails}
                 key={member.id}
-                className="group bg-white/90 backdrop-blur-sm border border-gray-200/50 rounded-2xl p-4 shadow-lg hover:shadow-xl hover:shadow-black/10 transition-all duration-300 hover:-translate-y-1"
-              >
-                {/* Profile Image */}
-                <div className="relative mb-4">
-                  <div className="w-20 h-20 mx-auto rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 p-1">
-                    <img
-                      src={
-                        member?.personalInfo?.ProfileImage ||
-                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                          member?.name || "User"
-                        )}&background=random`
-                      }
-                      alt={member?.name || "Default User"}
-                      className="w-full h-full rounded-xl object-cover"
-                    />
-                  </div>
-                </div>
-
-                {/* Member Info */}
-                <div className="text-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-900 mb-3 truncate">
-                    {member?.name || "Unknown User"}
-                  </h3>
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <div className="inline-flex items-center gap-2 px-2 py-1 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg">
-                      <span className="text-blue-700 font-semibold text-xs">
-                        {member?.member?.memberId || "N/A"}
-                      </span>
-                    </div>
-                    {member?.personalInfo?.bloodGroup && (
-                      <div className="inline-flex items-center gap-2 px-2 py-1 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-lg">
-                        <Droplets className="w-3 h-3 text-red-500" />
-                        <span className="text-red-700 font-bold text-xs">
-                          {member.personalInfo.bloodGroup}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Contact Details */}
-                <div className="space-y-3">
-                  {member?.personalInfo?.phone && (
-                    <div className="flex items-center gap-2 p-2 bg-gray-50/50 rounded-lg">
-                      <Phone className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-gray-900 truncate">
-                          {member.personalInfo.phone}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {member?.email && (
-                    <div className="flex items-center gap-2 p-2 bg-gray-50/50 rounded-lg">
-                      <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-gray-900 truncate">
-                          {member.email}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+                setModalType={setModalType}
+                role={session?.user?.role}
+              />
             ))}
           </div>
 
@@ -325,8 +309,108 @@ const page = () => {
           )}
         </div>
       </div>
-      <Model modelTitle="Add New Member">
-        <AddMemberForm />
+      <Model modelTitle={modalType}>
+        {modalType === "Add New Member" ? (
+          <AddMemberForm />
+        ) : (
+          <div className="p-6">
+            {/* Warning Message */}
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Trash2 className="w-4 h-4 text-red-600" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-red-800 mb-1">
+                    Delete Member:{" "}
+                    {deletedMemberDetails?.name || "Unknown User"}
+                  </h4>
+                  <p className="text-sm text-red-700">
+                    This action cannot be undone. The member's financial records
+                    will be preserved for audit purposes.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Member Details */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <h5 className="font-medium text-gray-800 mb-2">
+                Member Details:
+              </h5>
+              <div className="space-y-1 text-sm text-gray-600">
+                <p>
+                  <span className="font-medium">Name:</span>{" "}
+                  {deletedMemberDetails?.name || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Member ID:</span>{" "}
+                  {deletedMemberDetails?.member?.memberId || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Email:</span>{" "}
+                  {deletedMemberDetails?.email || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Role:</span>{" "}
+                  {deletedMemberDetails?.member?.type || "N/A"}
+                </p>
+              </div>
+            </div>
+
+            {/* Delete Reason Input */}
+            <div className="mb-6">
+              <label
+                htmlFor="deleteReason"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Reason for Deletion <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                id="deleteReason"
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value)}
+                placeholder="Please provide a detailed reason for deleting this member..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors resize-none"
+                rows={4}
+                disabled={isDeleting}
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                This reason will be recorded for audit purposes.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                // onClick={handleCloseModal}
+                // disabled={isDeleting}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteConfirm}
+                disabled={isDeleting || !deleteReason.trim()}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 border border-red-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    Delete Member
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
       </Model>
     </>
   );
