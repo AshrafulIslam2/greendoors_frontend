@@ -11,7 +11,6 @@ import {
 } from "@/state/user/userSlice";
 import { useSession } from "next-auth/react";
 import MemberCard from "@/component/Members/MemberCard";
-import { set } from "zod";
 import { useDispatch } from "react-redux";
 import { closeModel } from "@/state/helper_slice/modelOpenSlice";
 import { toast } from "react-toastify";
@@ -189,7 +188,7 @@ const page = () => {
 
   return (
     <>
-      <div className="min-h-[inherit] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
         <div className="max-w-7xl h-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header Section */}
           <div className="mb-8 flex flex-col items-start sm:flex-row justify-between sm:items-center">

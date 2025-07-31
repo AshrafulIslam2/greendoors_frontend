@@ -48,38 +48,38 @@ const members = [
 
 const timeline = [
   {
-    year: "2018",
+    year: "2019",
     event:
       "Green Doors Association founded with a vision for sustainable communities.",
     icon: "🌱",
   },
   {
-    year: "2019",
+    year: "2020",
     event: "First community garden project launched, serving 500+ families.",
     icon: "🌿",
   },
   {
-    year: "2020",
+    year: "2021",
     event: "Launched digital platform connecting eco-conscious communities.",
     icon: "💻",
   },
   {
-    year: "2021",
+    year: "2022",
     event: "Reached 1,000+ active members across 15 cities.",
     icon: "🌍",
   },
   {
-    year: "2022",
+    year: "2023",
     event: "Established partnerships with major environmental organizations.",
     icon: "🤝",
   },
   {
-    year: "2023",
+    year: "2024",
     event: "Launched Green City Initiative, transforming urban landscapes.",
     icon: "🏙️",
   },
   {
-    year: "2024",
+    year: "2025",
     event: "Awarded 'Environmental Impact Organization of the Year'.",
     icon: "🏆",
   },
@@ -424,7 +424,7 @@ const LandingPage = () => {
       {/* Custom Cursor */}
       <div
         ref={cursorRef}
-        className="fixed w-6 h-6 bg-emerald-400 rounded-full pointer-events-none z-50 mix-blend-difference"
+        className="fixed w-12 h-12 bg-emerald-400 rounded-full pointer-events-none z-50 mix-blend-difference"
         style={{ transform: "translate(-50%, -50%)" }}
       />
 

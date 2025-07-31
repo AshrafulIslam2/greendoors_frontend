@@ -27,7 +27,21 @@ export const userApiSlice = createApi({
           return response;
         },
       }),
-
+      getUserById: builder.query({
+        query: (id) => ({
+          url: `/user/member/${id}`,
+          method: "GET",
+        }),
+        providesTags: (result, error, arg) => [{ type: "User", id: arg }],
+        transformResponse: (response) => {
+          console.log("✅ Get User By ID Response:", response);
+          return response;
+        },
+        transformErrorResponse: (response) => {
+          console.error("❌ Get User By ID Error:", response);
+          return response;
+        },
+      }),
       createMember: builder.mutation({
         query: (data) => ({
           url: "/user/create",
@@ -44,6 +58,7 @@ export const userApiSlice = createApi({
           return response;
         },
       }),
+
       deleteUser: builder.mutation({
         query: ({ userId, reason }) => ({
           url: `/user/${userId}`,
@@ -73,4 +88,5 @@ export const {
   useLazyGetUserInfoQuery, // This is what you need for load more
   useCreateMemberMutation,
   useDeleteUserMutation,
+  useGetUserByIdQuery,
 } = userApiSlice;
