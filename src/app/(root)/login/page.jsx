@@ -73,7 +73,7 @@ export default function LoginPage() {
 
     try {
       await publicForgotPassword({ email }).unwrap();
-      toast.success("Reset link sent successfully!");
+      toast.success("Reset link sent successfully! Please check your email.");
       setEmail("");
       dispatch(closeModel());
     } catch (err) {
@@ -207,12 +207,12 @@ export default function LoginPage() {
           </form>
           {isSuccess && (
             <p className="text-green-500 text-sm mt-4">
-              Reset link sent successfully!
+              Reset link sent successfully! Please check your email.
             </p>
           )}
           {isError && (
             <p className="text-red-500 text-sm mt-4">
-              Failed to send reset email.
+              Failed to send reset email. Please try again later.
             </p>
           )}
         </div>

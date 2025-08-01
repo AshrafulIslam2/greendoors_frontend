@@ -34,8 +34,8 @@ const ResetPasswordPage = () => {
   };
 
   const validatePasswords = () => {
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters long");
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
