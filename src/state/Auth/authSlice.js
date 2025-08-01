@@ -1,21 +1,6 @@
-// features/auth/authSlice.js
 import baseQuery from "@/service/baseQuery";
 import { createApi } from "@reduxjs/toolkit/query";
 
-// export const authSlice = createSlice({
-//   name: "auth", // ✅ correct key
-//   initialState,
-//   reducers: {
-//     setCredentials: (state, action) => {
-//       state.token = action.payload.token;
-//       state.user = action.payload.user;
-//     },
-//     logout: (state) => {
-//       state.token = null;
-//       state.user = null;
-//     },
-//   },
-// });
 export const LoginApiSlice = createApi({
   reducerPath: "login",
   baseQuery: baseQuery,
@@ -29,10 +14,26 @@ export const LoginApiSlice = createApi({
           body: user,
         }),
       }),
+      // publicForgotPassword: builder.mutation({
+      //   query: (email) => ({
+      //     url: `/auth/forgot-password`,
+      //     method: "POST",
+      //     body: { email },
+      //   }),
+      // }),
+      // publicResetPassword: builder.mutation({
+      //   query: ({ token, password }) => ({
+      //     url: `/auth/reset-password`,
+      //     method: "POST",
+      //     body: { token, password },
+      //   }),
+      // }),
     };
   },
 });
-export const { usePublicLoginMutation } = LoginApiSlice;
 
-// export const { setCredentials, logout } = authSlice.actions;
-// export default authSlice.reducer;
+export const {
+  usePublicLoginMutation,
+  // usePublicForgotPasswordMutation,
+  // usePublicResetPasswordMutation,
+} = LoginApiSlice;

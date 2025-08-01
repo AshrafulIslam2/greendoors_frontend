@@ -79,6 +79,20 @@ export const userApiSlice = createApi({
           return response;
         },
       }),
+      publicForgotPassword: builder.mutation({
+        query: (data) => ({
+          url: `/auth/forgot-password`,
+          method: "POST",
+          body: { email: data.email },
+        }),
+      }),
+      publicResetPassword: builder.mutation({
+        query: ({ token, password }) => ({
+          url: `/auth/reset-password`,
+          method: "POST",
+          body: { token, password },
+        }),
+      }),
     };
   },
 });
@@ -89,4 +103,6 @@ export const {
   useCreateMemberMutation,
   useDeleteUserMutation,
   useGetUserByIdQuery,
+  usePublicForgotPasswordMutation,
+  usePublicResetPasswordMutation,
 } = userApiSlice;

@@ -5,15 +5,27 @@ import { Mail, Lock } from "lucide-react";
 import Password from "@/component/Password";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Model from "@/component/shared/Model";
+import { useDispatch } from "react-redux";
+import { closeModel, openModel } from "@/state/helper_slice/modelOpenSlice";
+import { usePublicForgotPasswordMutation } from "@/state/user/userSlice";
+import { toast } from "react-toastify";
 
-const LoginPage = () => {
+export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState("");
   const { data: session, status } = useSession();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Move redirect logic to useEffect to prevent render-time side effects
+  // Use the mutation hook
+  const [
+    publicForgotPassword,
+    { isLoading: isForgotPasswordLoading, isError, isSuccess },
+  ] = usePublicForgotPasswordMutation();
+
   useEffect(() => {
     if (status === "authenticated" && session) {
       router.push("/dashboard");
@@ -30,8 +42,6 @@ const LoginPage = () => {
     setIsLoading(true);
 
     const { email, password } = formData;
-    console.log("🚀 ~ handleSubmit ~ password:", password);
-
     try {
       const result = await signIn("credentials", {
         email,
@@ -39,13 +49,10 @@ const LoginPage = () => {
         redirect: false,
         callbackUrl: "/dashboard",
       });
-      console.log("🚀 ~ handleSubmit ~ result:", result);
 
       if (result?.error) {
         setError("Invalid email or password");
       } else if (result?.ok) {
-        // Don't manually redirect here, let the useEffect handle it
-        // The session will be updated and useEffect will trigger the redirect
         console.log("Login successful, session will update automatically");
       }
     } catch (error) {
@@ -56,7 +63,25 @@ const LoginPage = () => {
     }
   };
 
-  // Show loading state while checking authentication
+  const handleForgotPasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!email) {
+      alert("Please enter your email address");
+      return;
+    }
+
+    try {
+      await publicForgotPassword({ email }).unwrap();
+      toast.success("Reset link sent successfully!");
+      setEmail("");
+      dispatch(closeModel());
+    } catch (err) {
+      console.error("Failed to send reset email:", err);
+      toast.error("Failed to send reset email. Please try again.");
+    }
+  };
+
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
@@ -68,7 +93,6 @@ const LoginPage = () => {
     );
   }
 
-  // Don't render the login form if already authenticated
   if (status === "authenticated") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
@@ -118,9 +142,9 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <Password 
-              value={formData.password} 
-              onChange={handleChange} 
+            <Password
+              value={formData.password}
+              onChange={handleChange}
               disabled={isLoading}
             />
 
@@ -136,12 +160,12 @@ const LoginPage = () => {
                 />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <a
-                href="/forgot-password"
-                className="text-sm text-black hover:text-slate-700 font-medium transition-colors duration-200"
+              <span
+                onClick={() => dispatch(openModel())}
+                className="text-sm text-black cursor-pointer hover:text-slate-700 font-medium transition-colors duration-200"
               >
                 Forgot password?
-              </a>
+              </span>
             </div>
 
             <button
@@ -161,8 +185,38 @@ const LoginPage = () => {
           </form>
         </div>
       </div>
+      <Model modelTitle="Enter your email to reset your password">
+        <div className="p-6">
+          <form onSubmit={handleForgotPasswordSubmit}>
+            <div className="space-y-4">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+              />
+              <button
+                type="submit"
+                disabled={isForgotPasswordLoading}
+                className="w-full bg-gradient-to-br from-green-600 to-black text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 disabled:opacity-50"
+              >
+                {isForgotPasswordLoading ? "Sending..." : "Send Reset Link"}
+              </button>
+            </div>
+          </form>
+          {isSuccess && (
+            <p className="text-green-500 text-sm mt-4">
+              Reset link sent successfully!
+            </p>
+          )}
+          {isError && (
+            <p className="text-red-500 text-sm mt-4">
+              Failed to send reset email.
+            </p>
+          )}
+        </div>
+      </Model>
     </div>
   );
-};
-
-export default LoginPage;
+}
