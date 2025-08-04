@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import {
   User,
@@ -5,7 +6,13 @@ import {
   FileText,
   Image as ImageIcon,
   DollarSign,
+  CheckSquare,
 } from "lucide-react";
+import { useGetMemberListQuery } from "@/state/user/userSlice";
+import { useAddDepositMutation } from "@/state/deposit/depositApiSlice";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { closeModel } from "@/state/helper_slice/modelOpenSlice";
 
 const initialState = {
   memberId: "",
@@ -13,31 +20,58 @@ const initialState = {
   depositDate: "",
   notes: "",
   depositSlip: null,
+  is_fine_waived: false,
 };
 
 const inputClass =
   "pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 bg-gray-50 w-full";
 
-const AddDepositForm = ({ memberIds = [], onSubmit }) => {
+const AddDepositForm = () => {
   const [form, setForm] = useState(initialState);
+  const dispatch = useDispatch();
+  // Fetch member list
+  const {
+    data: memberData,
+    isLoading: isMembersLoading,
+    error: membersError,
+  } = useGetMemberListQuery();
+
+  // Add deposit mutation
+  const [addDeposit, { isLoading: isSubmitting, error: submitError }] =
+    useAddDepositMutation();
 
   const handleChange = (e) => {
-    const { name, value, files, type } = e.target;
+    const { name, value, files, type, checked } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: type === "file" ? files[0] : value,
+      [name]:
+        type === "file" ? files[0] : type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        formData.append(key, value);
-      }
-    });
-    if (onSubmit) onSubmit(formData);
+
+    try {
+      // const formData = new FormData();
+      // Object.entries(form).forEach(([key, value]) => {
+      //   if (value !== null && value !== undefined && value !== "") {
+      //     formData.append(key, value);
+      //   }
+      // });
+
+      const result = await addDeposit(form).unwrap();
+      console.log("Deposit added successfully:", result);
+      toast.success("Deposit added successfully!");
+      dispatch(closeModel());
+      // Reset form on success
+      setForm(initialState);
+
+      // // Call onSubmit callback if provided
+      // if (onSubmit) onSubmit(result);
+    } catch (error) {
+      console.error("Failed to add deposit:", error);
+    }
   };
 
   return (
@@ -46,6 +80,15 @@ const AddDepositForm = ({ memberIds = [], onSubmit }) => {
       onSubmit={handleSubmit}
       encType="multipart/form-data"
     >
+      {/* Error message */}
+      {submitError && (
+        <div className="md:col-span-2 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+          <p className="text-sm font-medium">
+            Error: {submitError?.data?.message || "Failed to add deposit"}
+          </p>
+        </div>
+      )}
+
       {/* Member ID */}
       <div className="relative flex flex-col gap-2">
         <label className="text-sm font-semibold text-gray-700">Member ID</label>
@@ -58,15 +101,24 @@ const AddDepositForm = ({ memberIds = [], onSubmit }) => {
           onChange={handleChange}
           className={inputClass}
           required
+          disabled={isMembersLoading || isSubmitting}
         >
-          <option value="">Select Member</option>
-          {memberIds.map((id) => (
-            <option key={id} value={id}>
-              {id}
+          <option value="">
+            {isMembersLoading ? "Loading members..." : "Select Member"}
+          </option>
+          {membersError && (
+            <option value="" disabled>
+              Error loading members
+            </option>
+          )}
+          {memberData?.data?.map((member, index) => (
+            <option key={index} value={member}>
+              {member}
             </option>
           ))}
         </select>
       </div>
+
       {/* Amount */}
       <div className="relative flex flex-col gap-2">
         <label className="text-sm font-semibold text-gray-700">Amount</label>
@@ -83,8 +135,10 @@ const AddDepositForm = ({ memberIds = [], onSubmit }) => {
           min="0"
           step="0.01"
           required
+          disabled={isSubmitting}
         />
       </div>
+
       {/* Deposit Date */}
       <div className="relative flex flex-col gap-2">
         <label className="text-sm font-semibold text-gray-700">
@@ -100,8 +154,30 @@ const AddDepositForm = ({ memberIds = [], onSubmit }) => {
           onChange={handleChange}
           className={inputClass}
           required
+          disabled={isSubmitting}
         />
       </div>
+
+      {/* Fine Waved Checkbox */}
+      <div className="flex items-center gap-3">
+        <input
+          type="checkbox"
+          name="is_fine_waived"
+          checked={form.is_fine_waived}
+          onChange={handleChange}
+          className="w-5 h-5 text-emerald-600 bg-gray-50 border-gray-200 rounded focus:ring-emerald-500 focus:ring-2"
+          id="is_fine_waived"
+          disabled={isSubmitting}
+        />
+        <label
+          htmlFor="is_fine_waived"
+          className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+        >
+          <CheckSquare className="w-4 h-4 text-emerald-400" />
+          Fine Waved
+        </label>
+      </div>
+
       {/* Notes */}
       <div className="relative flex flex-col gap-2 md:col-span-2">
         <label className="text-sm font-semibold text-gray-700">Notes</label>
@@ -115,8 +191,10 @@ const AddDepositForm = ({ memberIds = [], onSubmit }) => {
           rows={3}
           className="pl-10 pr-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 bg-gray-50 w-full resize-none"
           placeholder="Enter notes (optional)"
+          disabled={isSubmitting}
         />
       </div>
+
       {/* Deposit Slip */}
       <div className="flex flex-col gap-2 md:col-span-2">
         <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
@@ -128,15 +206,22 @@ const AddDepositForm = ({ memberIds = [], onSubmit }) => {
           accept="image/*,application/pdf"
           onChange={handleChange}
           className="rounded-xl border border-gray-200 px-4 py-2 bg-gray-50"
+          disabled={isSubmitting}
         />
       </div>
+
       {/* Submit Button */}
       <div className="md:col-span-2">
         <button
           type="submit"
-          className="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-semibold rounded-xl shadow hover:scale-[1.02] transition-all duration-300"
+          className="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-semibold rounded-xl shadow hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          disabled={isMembersLoading || isSubmitting}
         >
-          Add Deposit
+          {isSubmitting
+            ? "Adding Deposit..."
+            : isMembersLoading
+            ? "Loading..."
+            : "Add Deposit"}
         </button>
       </div>
     </form>

@@ -93,6 +93,12 @@ export const userApiSlice = createApi({
           body: { token, password },
         }),
       }),
+      getMemberList: builder.query({
+        query: () => ({
+          url: "/user/member-list",
+          method: "GET",
+        }),
+      }),
     };
   },
 });
@@ -103,6 +109,7 @@ export const {
   useCreateMemberMutation,
   useDeleteUserMutation,
   useGetUserByIdQuery,
+  useGetMemberListQuery,
   usePublicForgotPasswordMutation,
   usePublicResetPasswordMutation,
 } = userApiSlice;
