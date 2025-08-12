@@ -6,33 +6,50 @@ import Model from "../shared/Model";
 import AddDepositForm from "./AddDepositForm";
 import { useDispatch, useSelector } from "react-redux";
 import { openModel, closeModel } from "@/state/helper_slice/modelOpenSlice";
-import { useGetDepositsQuery } from "@/state/deposit/depositApiSlice";
+import {
+  useGetDepositsQuery,
+  useGetUserDepositsQuery,
+  useDeleteDepositByIdMutation,
+} from "@/state/deposit/depositApiSlice";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 const PAGE_SIZE = 10;
 
 const Deposit = () => {
   const [page, setPage] = useState(1);
+  const { data: session } = useSession();
+
   const [filterYear, setFilterYear] = useState("");
   const dispatch = useDispatch();
-  const isModelOpen = useSelector((state) => state.model.isModelOpen);
+  const [deleteDeposit, { isLoading: isDeleting }] =
+    useDeleteDepositByIdMutation();
 
-  // Fetch deposits from API
+  // Get user info from Redux store (adjust the path based on your auth slice)
+  // const user = useSelector((state) => state.auth.user); // Adjust this path based on your auth slice structure
+  const isSuperAdmin = session?.user?.role === "SUPER_ADMIN";
+
+  // Conditional API calls based on user role
   const {
     data: depositsData,
     isLoading,
     error,
     refetch,
-  } = useGetDepositsQuery({
-    page,
-    limit: PAGE_SIZE,
-  });
+  } = isSuperAdmin
+    ? useGetDepositsQuery({
+        page,
+        limit: PAGE_SIZE,
+      })
+    : useGetUserDepositsQuery({
+        page,
+        limit: PAGE_SIZE,
+      });
 
   // Extract data from API response
   const deposits = depositsData?.data || [];
   const totalCount = depositsData?.pagination?.totalCount || 0;
-  console.log("🚀 ~ Deposit ~ totalCount:", totalCount);
+
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
-  console.log("🚀 ~ Deposit ~ totalPages:", totalPages);
 
   // Get unique years for filtering (from current data)
   const uniqueYears = [
@@ -53,24 +70,26 @@ const Deposit = () => {
 
   // Calculate totals for current filtered data
   const totalDeposit = filteredDeposits.reduce(
-    (sum, d) => sum + (Number(d.amount) || 0),
+    (sum, d) =>
+      sum + ((Number(d.amount) || 0) - (Number(d.lateFee?.amount) || 0)),
     0
   );
-  // const totalFine = filteredDeposits.reduce(
-  //   (sum, d) => sum + (Number(d.fine) || 0),
-  //   0
-  // );
 
   const handleYearFilter = (year) => {
     setFilterYear(year);
     setPage(1); // Reset to first page when filtering
   };
 
-  const handleDelete = (depositId) => {
+  const handleDelete = async (depositId) => {
     if (window.confirm("Are you sure you want to delete this deposit?")) {
-      // Add your delete logic here
-      console.log("Deleting deposit with ID:", depositId);
-      // You'll need to implement the delete API call
+      try {
+        await deleteDeposit(depositId).unwrap();
+        toast.success("Deposit deleted successfully!");
+        // Success - the query will automatically refetch due to invalidatesTags
+      } catch (error) {
+        console.error("Failed to delete deposit:", error);
+        // Handle error (show toast, etc.)
+      }
     }
   };
 
@@ -107,14 +126,17 @@ const Deposit = () => {
     <div className="p-4 md:p-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <h2 className="text-2xl font-bold text-emerald-700 flex items-center gap-2">
-          <Banknote className="w-6 h-6 text-emerald-500" /> Deposits
+          <Banknote className="w-6 h-6 text-emerald-500" />
+          {isSuperAdmin ? "All Deposits" : "My Deposits"}
         </h2>
-        <button
-          className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow hover:scale-105 transition"
-          onClick={() => dispatch(openModel())}
-        >
-          <PlusCircle className="w-5 h-5" /> Add Deposit
-        </button>
+        {isSuperAdmin && (
+          <button
+            className="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-6 py-2 rounded-lg font-semibold shadow hover:scale-105 transition"
+            onClick={() => dispatch(openModel())}
+          >
+            <PlusCircle className="w-5 h-5" /> Add Deposit
+          </button>
+        )}
       </div>
 
       {/* Filter by Year */}
@@ -146,19 +168,24 @@ const Deposit = () => {
           <thead>
             <tr className="bg-gradient-to-r from-emerald-200 to-blue-100 text-emerald-900">
               <th className="px-4 py-3 text-left">#</th>
-              <th className="px-4 py-3 text-left">Member ID</th>
+              {isSuperAdmin && (
+                <th className="px-4 py-3 text-left">Member ID</th>
+              )}
               <th className="px-4 py-3 text-left">Amount</th>
               <th className="px-4 py-3 text-left">Date</th>
               <th className="px-4 py-3 text-left">Late Fine</th>
               <th className="px-4 py-3 text-left">Fine Waved</th>
               <th className="px-4 py-3 text-left">Notes</th>
-              <th className="px-4 py-3 text-left">Actions</th>
+              {isSuperAdmin && <th className="px-4 py-3 text-left">Actions</th>}
             </tr>
           </thead>
           <tbody>
             {filteredDeposits.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-8 text-gray-400">
+                <td
+                  colSpan={isSuperAdmin ? 8 : 6}
+                  className="text-center py-8 text-gray-400"
+                >
                   No deposits found.
                 </td>
               </tr>
@@ -171,11 +198,20 @@ const Deposit = () => {
                   <td className="px-4 py-2 font-medium text-emerald-700">
                     {(page - 1) * PAGE_SIZE + idx + 1}
                   </td>
-                  <td className="px-4 py-2 font-semibold">
-                    {deposit.memberId || "N/A"}
-                  </td>
+
+                  {isSuperAdmin && (
+                    <td className="px-4 py-2 font-semibold hover:text-emerald-600 hover:underline">
+                      <Link href={`/deposits/${deposit.memberId}`}>
+                        {deposit.memberId || "N/A"}
+                      </Link>
+                    </td>
+                  )}
+
                   <td className="px-4 py-2 font-semibold text-emerald-800">
-                    ৳ {Number(deposit.amount || 0).toLocaleString()}
+                    ৳{" "}
+                    {Number(
+                      deposit.amount - deposit.lateFeeAmount || 0
+                    ).toLocaleString()}
                   </td>
                   <td className="px-4 py-2">
                     {deposit.depositDate
@@ -207,35 +243,30 @@ const Deposit = () => {
                   <td className="px-4 py-2 max-w-xs truncate">
                     {deposit.notes || "-"}
                   </td>
-                  <td className="px-4 py-2  space-y-2 sm:space-x-2">
-                    <Link
-                      href={`/deposits/${deposit.memberId || deposit.id}`}
-                      className="inline-block px-4 py-1 rounded-full bg-emerald-500 text-white text-xs font-semibold hover:bg-emerald-600 transition"
-                    >
-                      Details
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(deposit.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      Delete
-                    </button>
-                  </td>
+                  {isSuperAdmin && (
+                    <td className="px-4 py-2 space-y-2 sm:space-x-2">
+                      <button
+                        onClick={() => handleDelete(deposit.id)}
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
           </tbody>
           <tfoot>
             <tr className="bg-gradient-to-r from-emerald-200 to-blue-100 font-bold">
-              <td className="px-4 py-2" colSpan={2}>
-                Total (Current Page)
-              </td>
+              <td className="px-4 py-2">Total (Current Page)</td>
+              {isSuperAdmin && <td className="px-4 py-2"></td>}
               <td className="px-4 py-2">৳ {totalDeposit.toLocaleString()}</td>
               <td colSpan={1} className="px-4 py-2">
                 {filteredDeposits.length} records
               </td>
-              <td className="px-4 py-2" colSpan={4}>
+              <td className="px-4 py-2" colSpan={isSuperAdmin ? 4 : 3}>
                 {filteredDeposits
                   .reduce(
                     (acc, deposit) =>
@@ -302,10 +333,12 @@ const Deposit = () => {
         {Math.min(page * PAGE_SIZE, totalCount)} of {totalCount} entries
       </div>
 
-      {/* Modal for Add Deposit */}
-      <Model modelTitle={"Add New Deposit"}>
-        <AddDepositForm />
-      </Model>
+      {/* Modal for Add Deposit - Only show for Super Admin */}
+      {isSuperAdmin && (
+        <Model modelTitle={"Add New Deposit"}>
+          <AddDepositForm />
+        </Model>
+      )}
     </div>
   );
 };

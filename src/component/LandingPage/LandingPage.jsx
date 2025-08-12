@@ -3,9 +3,208 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Calendar,
+  Users,
+  Briefcase,
+} from "lucide-react";
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
+
+// Board of Directors data
+const boardMembers = [
+  {
+    name: "Dr. Rahman Ahmed",
+    title: "Chairman",
+    image:
+      "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400",
+    bio: "Former UN Environment Program Director with 25+ years in sustainable development.",
+    experience: "25+ Years",
+    specialization: "Environmental Policy",
+  },
+  {
+    name: "Ms. Fatima Khan",
+    title: "Vice Chairman",
+    image:
+      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
+    bio: "Social entrepreneur and community development expert.",
+    experience: "18+ Years",
+    specialization: "Community Development",
+  },
+  {
+    name: "Prof. Dr. Karim Hassan",
+    title: "Secretary",
+    image:
+      "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400",
+    bio: "Agricultural scientist specializing in sustainable farming practices.",
+    experience: "20+ Years",
+    specialization: "Agricultural Science",
+  },
+  {
+    name: "Mr. Abdul Majid",
+    title: "Treasurer",
+    image:
+      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400",
+    bio: "Financial advisor and microfinance expert.",
+    experience: "15+ Years",
+    specialization: "Financial Management",
+  },
+];
+
+// Recent Projects data
+const recentProjects = [
+  {
+    title: "Integrated Agro Development Project",
+    description:
+      "Modernizing agricultural practices with sustainable farming techniques, benefiting 500+ farmers across rural communities.",
+    image:
+      "https://images.pexels.com/photos/1301856/pexels-photo-1301856.jpeg?auto=compress&cs=tinysrgb&w=600",
+    status: "Ongoing",
+    startDate: "Jan 2024",
+    beneficiaries: "500+ Farmers",
+    category: "Agriculture",
+    progress: 75,
+  },
+  {
+    title: "Community Fish Farming Initiative",
+    description:
+      "Establishing sustainable aquaculture systems to improve food security and generate income for local communities.",
+    image:
+      "https://images.pexels.com/photos/1001990/pexels-photo-1001990.jpeg?auto=compress&cs=tinysrgb&w=600",
+    status: "In Progress",
+    startDate: "Mar 2024",
+    beneficiaries: "200+ Families",
+    category: "Aquaculture",
+    progress: 60,
+  },
+  {
+    title: "Eco-Friendly Leather Processing",
+    description:
+      "Implementing green technology in leather production to reduce environmental impact while creating employment.",
+    image:
+      "https://images.pexels.com/photos/1598300/pexels-photo-1598300.jpeg?auto=compress&cs=tinysrgb&w=600",
+    status: "Planning",
+    startDate: "Sep 2024",
+    beneficiaries: "300+ Workers",
+    category: "Manufacturing",
+    progress: 25,
+  },
+  {
+    title: "Solar Energy Cooperative",
+    description:
+      "Building community-owned solar installations to provide clean energy access to remote villages.",
+    image:
+      "https://images.pexels.com/photos/2800832/pexels-photo-2800832.jpeg?auto=compress&cs=tinysrgb&w=600",
+    status: "Ongoing",
+    startDate: "Nov 2023",
+    beneficiaries: "1000+ Households",
+    category: "Energy",
+    progress: 85,
+  },
+];
+
+// Testimonials data
+const testimonials = [
+  {
+    name: "Sarah Johnson",
+    role: "Community Leader",
+    image:
+      "https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=400",
+    content:
+      "Green Doors Association transformed our community through their sustainable agriculture program. Our farmers now earn 40% more income while protecting the environment.",
+    rating: 5,
+    location: "Rural District A",
+  },
+  {
+    name: "Mohammad Ali",
+    role: "Fish Farmer",
+    image:
+      "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400",
+    content:
+      "The fish farming initiative changed my life completely. From struggling to feed my family, I now run a profitable aquaculture business that supports 5 families.",
+    rating: 5,
+    location: "Coastal Region B",
+  },
+  {
+    name: "Dr. Amina Rahman",
+    role: "Environmental Scientist",
+    image:
+      "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=400",
+    content:
+      "Their approach to environmental conservation is exemplary. They don't just talk about sustainability - they implement real solutions that work for both people and planet.",
+    rating: 5,
+    location: "University Partnership",
+  },
+  {
+    name: "Ahmed Hassan",
+    role: "Solar Cooperative Member",
+    image:
+      "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400",
+    content:
+      "Thanks to the solar energy project, our village now has reliable electricity. Children can study at night and small businesses can operate extended hours.",
+    rating: 5,
+    location: "Mountain Village C",
+  },
+];
+
+// Members list data
+const membersList = [
+  {
+    name: "Dr. Rashida Begum",
+    profession: "Environmental Engineer",
+    image:
+      "https://images.pexels.com/photos/1239288/pexels-photo-1239288.jpeg?auto=compress&cs=tinysrgb&w=400",
+    joinDate: "2019",
+    contribution: "Water Management",
+  },
+  {
+    name: "Eng. Kamal Uddin",
+    profession: "Renewable Energy Specialist",
+    image:
+      "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400",
+    joinDate: "2020",
+    contribution: "Solar Projects",
+  },
+  {
+    name: "Ms. Nasreen Akter",
+    profession: "Community Organizer",
+    image:
+      "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=400",
+    joinDate: "2021",
+    contribution: "Rural Development",
+  },
+  {
+    name: "Dr. Abul Kalam",
+    profession: "Agricultural Scientist",
+    image:
+      "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400",
+    joinDate: "2018",
+    contribution: "Sustainable Farming",
+  },
+  {
+    name: "Ms. Ruma Khatun",
+    profession: "Microfinance Expert",
+    image:
+      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400",
+    joinDate: "2022",
+    contribution: "Financial Inclusion",
+  },
+  {
+    name: "Prof. Mizanur Rahman",
+    profession: "Climate Researcher",
+    image:
+      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
+    joinDate: "2019",
+    contribution: "Climate Studies",
+  },
+];
 
 // Enhanced dummy data with better structure
 const members = [
@@ -85,63 +284,6 @@ const timeline = [
   },
 ];
 
-const projects = [
-  {
-    title: "Green City Initiative",
-    description:
-      "Transforming concrete jungles into thriving green ecosystems through innovative urban planning and community engagement.",
-    image:
-      "https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=600",
-    impact: "50+ Cities Transformed",
-    category: "Urban Development",
-  },
-  {
-    title: "Eco School Program",
-    description:
-      "Educating the next generation about sustainability through hands-on learning experiences and environmental stewardship.",
-    image:
-      "https://images.pexels.com/photos/8613320/pexels-photo-8613320.jpeg?auto=compress&cs=tinysrgb&w=600",
-    impact: "10,000+ Students Reached",
-    category: "Education",
-  },
-  {
-    title: "Clean Water Initiative",
-    description:
-      "Providing sustainable clean water solutions to underserved communities through innovative filtration technology.",
-    image:
-      "https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=600",
-    impact: "25,000+ People Served",
-    category: "Water Access",
-  },
-  {
-    title: "Carbon Neutral Homes",
-    description:
-      "Retrofitting residential buildings with renewable energy systems and sustainable materials for zero-emission living.",
-    image:
-      "https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=600",
-    impact: "500+ Homes Converted",
-    category: "Energy",
-  },
-  {
-    title: "Community Gardens Network",
-    description:
-      "Building interconnected community gardens that provide fresh food while strengthening neighborhood bonds.",
-    image:
-      "https://images.pexels.com/photos/1301856/pexels-photo-1301856.jpeg?auto=compress&cs=tinysrgb&w=600",
-    impact: "200+ Gardens Created",
-    category: "Food Security",
-  },
-  {
-    title: "Renewable Energy Co-ops",
-    description:
-      "Establishing community-owned renewable energy cooperatives that make clean power accessible and affordable.",
-    image:
-      "https://images.pexels.com/photos/2800832/pexels-photo-2800832.jpeg?auto=compress&cs=tinysrgb&w=600",
-    impact: "15 MW Generated",
-    category: "Energy",
-  },
-];
-
 const LandingPage = () => {
   const heroRef = useRef(null);
   const membersRef = useRef(null);
@@ -149,7 +291,16 @@ const LandingPage = () => {
   const missionRef = useRef(null);
   const projectsRef = useRef(null);
   const cursorRef = useRef(null);
+  const boardRef = useRef(null);
+  const recentProjectsRef = useRef(null);
+  const testimonialsRef = useRef(null);
+  const membersListRef = useRef(null);
+  const contactRef = useRef(null);
+
   const [particles, setParticles] = useState([]);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentMemberSlide, setCurrentMemberSlide] = useState(0);
+
   useEffect(() => {
     // Custom cursor
     const cursor = cursorRef.current;
@@ -215,66 +366,6 @@ const LandingPage = () => {
       },
     });
 
-    // Members section with magnetic hover effects
-    const memberCards = gsap.utils.toArray(".member-card");
-    memberCards.forEach((card) => {
-      const tl = gsap.timeline({ paused: true });
-
-      tl.to(card, {
-        scale: 1.05,
-        z: 100,
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-
-      card.addEventListener("mouseenter", () => tl.play());
-      card.addEventListener("mouseleave", () => tl.reverse());
-
-      // Magnetic effect
-      card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-
-        gsap.to(card, {
-          x: x * 0.1,
-          y: y * 0.1,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      });
-
-      card.addEventListener("mouseleave", () => {
-        gsap.to(card, {
-          x: 0,
-          y: 0,
-          duration: 0.5,
-          ease: "elastic.out(1, 0.75)",
-        });
-      });
-    });
-
-    // Staggered animation for member cards
-    gsap.fromTo(
-      ".member-card",
-      { opacity: 0, y: 100, rotationY: 90 },
-      {
-        opacity: 1,
-        y: 0,
-        rotationY: 0,
-        duration: 1.2,
-        stagger: 0.2,
-        ease: "back.out(1.7)",
-        scrollTrigger: {
-          trigger: membersRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
-
     // Timeline advanced animations
     const timelineItems = gsap.utils.toArray(".timeline-item");
     timelineItems.forEach((item, index) => {
@@ -296,6 +387,48 @@ const LandingPage = () => {
             start: "top 85%",
             end: "bottom 15%",
             toggleActions: "play none none reverse",
+          },
+        }
+      );
+    });
+
+    // Board members animation
+    const boardItems = gsap.utils.toArray(".board-item");
+    boardItems.forEach((item, index) => {
+      gsap.fromTo(
+        item,
+        { opacity: 0, y: 100, scale: 0.8 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 1,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+            stagger: 0.2,
+          },
+        }
+      );
+    });
+
+    // Recent projects animation
+    const projectItems = gsap.utils.toArray(".project-item");
+    projectItems.forEach((item, index) => {
+      gsap.fromTo(
+        item,
+        { opacity: 0, y: 80, rotationY: 45 },
+        {
+          opacity: 1,
+          y: 0,
+          rotationY: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: item,
+            start: "top 85%",
+            stagger: 0.1,
           },
         }
       );
@@ -331,76 +464,6 @@ const LandingPage = () => {
       );
     }
 
-    // Projects section with 3D card effects
-    const projectCards = gsap.utils.toArray(".project-card");
-    projectCards.forEach((card, index) => {
-      gsap.fromTo(
-        card,
-        {
-          opacity: 0,
-          y: 120,
-          rotationX: 45,
-          scale: 0.8,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          rotationX: 0,
-          scale: 1,
-          duration: 1.2,
-          delay: index * 0.15,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 85%",
-            end: "bottom 15%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-
-      // 3D hover effect
-      card.addEventListener("mousemove", (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateX = ((y - centerY) / centerY) * -10;
-        const rotateY = ((x - centerX) / centerX) * 10;
-
-        gsap.to(card, {
-          rotationX: rotateX,
-          rotationY: rotateY,
-          transformPerspective: 1000,
-          duration: 0.3,
-          ease: "power2.out",
-        });
-      });
-
-      card.addEventListener("mouseleave", () => {
-        gsap.to(card, {
-          rotationX: 0,
-          rotationY: 0,
-          duration: 0.5,
-          ease: "power2.out",
-        });
-      });
-    });
-
-    // Scroll progress indicator
-    gsap.to(".progress-bar", {
-      scaleX: 1,
-      ease: "none",
-      scrollTrigger: {
-        trigger: "body",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: true,
-      },
-    });
-
     // Cleanup function
     return () => {
       document.removeEventListener("mousemove", updateCursor);
@@ -419,26 +482,57 @@ const LandingPage = () => {
     }));
     setParticles(newParticles);
   }, []);
+
+  // Auto-rotate testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const nextTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setCurrentTestimonial(
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length
+    );
+  };
+
+  const nextMemberSlide = () => {
+    setCurrentMemberSlide(
+      (prev) => (prev + 1) % Math.ceil(membersList.length / 3)
+    );
+  };
+
+  const prevMemberSlide = () => {
+    setCurrentMemberSlide(
+      (prev) =>
+        (prev - 1 + Math.ceil(membersList.length / 3)) %
+        Math.ceil(membersList.length / 3)
+    );
+  };
+
   return (
     <>
       {/* Custom Cursor */}
       <div
         ref={cursorRef}
-        className="fixed w-12 h-12 bg-emerald-400 rounded-full pointer-events-none z-50 mix-blend-difference"
+        className="fixed w-4 h-4 bg-emerald-400 rounded-full pointer-events-none z-50 mix-blend-difference"
         style={{ transform: "translate(-50%, -50%)" }}
       />
 
       {/* Scroll Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-blue-500 z-40 origin-left scale-x-0 progress-bar" />
 
-      <div className="bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-800 min-h-screen w-full overflow-x-hidden">
+      <div className="bg-gradient-to-br from-slate-950 via-green-950 to-slate-900 min-h-screen w-full overflow-x-hidden">
         {/* Hero Section */}
         <section
           ref={heroRef}
           className="relative flex flex-col items-center justify-center min-h-screen w-full overflow-hidden"
         >
-          {/* <div className="hero-bg absolute inset-0 bg-gradient-to-br from-emerald-600/20 via-blue-600/10 to-slate-900/40" /> */}
-
           {/* Animated Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
             {particles.map((particle) => (
@@ -477,53 +571,227 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Members Section */}
+        {/* Board of Directors Section */}
         <section
-          ref={membersRef}
-          className="relative py-24 bg-gradient-to-br from-slate-800 to-emerald-800"
+          ref={boardRef}
+          className="relative py-24  from-slate-900 to-emerald-900"
         >
           <div className="max-w-7xl mx-auto px-4">
             <h2 className="text-4xl md:text-6xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">
-              Meet Our Visionaries
+              Board of Directors
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
-              {members.map((member, idx) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {boardMembers.map((member, idx) => (
                 <div
                   key={idx}
-                  className="member-card group bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20 hover:border-emerald-400/50 transition-all duration-500"
+                  className="board-item flex flex-col bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:border-emerald-400/50 transition-all duration-500 hover:transform hover:scale-105"
                 >
-                  <div className="relative mb-6 overflow-hidden rounded-2xl">
+                  <div className="relative mb-6">
                     <img
                       src={member.image}
                       alt={member.name}
-                      className="w-full h-48 object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-24 h-24 rounded-full mx-auto object-cover border-4 border-emerald-400/50"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full px-3 py-1">
+                      <span className="text-white text-xs font-bold">
+                        {member.title}
+                      </span>
+                    </div>
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors duration-300">
+                  <h3 className="text-xl font-bold text-white mb-2 text-center">
                     {member.name}
                   </h3>
-
-                  <span className="inline-block text-emerald-400 font-semibold text-sm bg-emerald-400/20 px-3 py-1 rounded-full mb-3">
-                    {member.title}
-                  </span>
-
-                  <p className="text-white/70 text-sm leading-relaxed">
+                  <p className="text-emerald-300 text-sm text-center mb-3">
+                    {member.specialization}
+                  </p>
+                  <p className="text-white/80 text-sm mb-4 leading-relaxed">
                     {member.bio}
                   </p>
+
+                  <div className="flex justify-between items-center text-xs mt-auto">
+                    <span className="text-emerald-400 font-semibold">
+                      <Briefcase className="w-3 h-3 inline mr-1" />
+                      {member.experience}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
+        {/* Recent Projects Section */}
+        <section ref={recentProjectsRef} className="relative py-24 ">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-4xl md:text-6xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+              Our Recent Work
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {recentProjects.map((project, idx) => (
+                <div
+                  key={idx}
+                  className="project-item bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 hover:border-emerald-400/50 transition-all duration-500"
+                >
+                  <div className="relative">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          project.status === "Ongoing"
+                            ? "bg-green-500 text-white"
+                            : project.status === "In Progress"
+                            ? "bg-yellow-500 text-black"
+                            : "bg-blue-500 text-white"
+                        }`}
+                      >
+                        {project.status}
+                      </span>
+                    </div>
+                    <div className="absolute top-4 right-4 bg-black/50 rounded-lg px-2 py-1">
+                      <span className="text-white text-xs">
+                        {project.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold text-white mb-3">
+                      {project.title}
+                    </h3>
+                    <p className="text-white/80 mb-4 leading-relaxed">
+                      {project.description}
+                    </p>
+
+                    <div className="space-y-3 mb-4">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-emerald-300 flex items-center">
+                          <Calendar className="w-4 h-4 mr-2" />
+                          Started: {project.startDate}
+                        </span>
+                        <span className="text-blue-300 flex items-center">
+                          <Users className="w-4 h-4 mr-2" />
+                          {project.beneficiaries}
+                        </span>
+                      </div>
+
+                      {/* <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-white/70 text-sm">
+                            Progress
+                          </span>
+                          <span className="text-emerald-400 text-sm font-bold">
+                            {project.progress}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-white/20 rounded-full h-2">
+                          <div
+                            className="bg-gradient-to-r from-emerald-400 to-blue-400 h-2 rounded-full transition-all duration-1000"
+                            style={{ width: `${project.progress}%` }}
+                          ></div>
+                        </div>
+                      </div> */}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Members List Slider Section */}
+        <section ref={membersListRef} className="relative py-24 b">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-4xl md:text-6xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">
+              Our Members
+            </h2>
+
+            <div className="relative">
+              <div className="overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentMemberSlide * 100}%)`,
+                  }}
+                >
+                  {Array.from({
+                    length: Math.ceil(membersList.length / 3),
+                  }).map((_, slideIdx) => (
+                    <div key={slideIdx} className="w-full flex-shrink-0">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {membersList
+                          .slice(slideIdx * 3, (slideIdx + 1) * 3)
+                          .map((member, idx) => (
+                            <div
+                              key={idx}
+                              className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:border-emerald-400/50 transition-all duration-500 hover:transform hover:scale-105"
+                            >
+                              <div className="text-center">
+                                <img
+                                  src={member.image}
+                                  alt={member.name}
+                                  className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-2 border-emerald-400/50"
+                                />
+                                <h3 className="text-xl font-bold text-white mb-2">
+                                  {member.name}
+                                </h3>
+                                <p className="text-emerald-300 mb-2">
+                                  {member.profession}
+                                </p>
+                                <p className="text-white/60 text-sm mb-3">
+                                  Member since {member.joinDate}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Navigation buttons */}
+              <button
+                onClick={prevMemberSlide}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-emerald-500/20 hover:bg-emerald-500/40 rounded-full p-3 transition-all duration-300"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+              <button
+                onClick={nextMemberSlide}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-emerald-500/20 hover:bg-emerald-500/40 rounded-full p-3 transition-all duration-300"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+
+              {/* Dots indicator */}
+              <div className="flex justify-center mt-8 space-x-2">
+                {Array.from({ length: Math.ceil(membersList.length / 3) }).map(
+                  (_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentMemberSlide(idx)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                        idx === currentMemberSlide
+                          ? "bg-emerald-400"
+                          : "bg-white/30"
+                      }`}
+                    />
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Timeline Section */}
-        <section
-          ref={timelineRef}
-          className="relative py-24 bg-gradient-to-br from-emerald-800 to-slate-900"
-        >
+        <section ref={timelineRef} className="relative py-24 ">
           <div className="max-w-5xl mx-auto px-4">
             <h2 className="text-4xl md:text-6xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
               Our Journey
@@ -558,7 +826,7 @@ const LandingPage = () => {
               ))}
             </div>
 
-            {/* Mobile Timeline: vertical cards */}
+            {/* Mobile Timeline */}
             <div className="flex flex-col gap-8 md:hidden">
               {timeline.map((item, idx) => (
                 <div
@@ -588,10 +856,7 @@ const LandingPage = () => {
         </section>
 
         {/* Mission & Vision Section */}
-        <section
-          ref={missionRef}
-          className="relative py-24 bg-gradient-to-br from-slate-900 to-emerald-900"
-        >
+        <section ref={missionRef} className="relative py-24 ">
           <div className="max-w-7xl mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
@@ -631,74 +896,227 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Projects Section */}
-        <section
-          ref={projectsRef}
-          className="relative py-24 bg-gradient-to-br from-emerald-900 to-slate-800"
-        >
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-4xl md:text-6xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-400">
-              Our Impact Projects
+        {/* Testimonials Section */}
+        <section ref={testimonialsRef} className="relative py-24 ">
+          <div className="max-w-6xl mx-auto px-4">
+            <h2 className="text-4xl md:text-6xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+              What People Say
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project, idx) => (
-                <div
-                  key={idx}
-                  className="project-card group bg-white/10 backdrop-blur-lg rounded-3xl overflow-hidden border border-white/20 hover:border-emerald-400/50 transition-all duration-500"
-                >
-                  <div className="relative overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute top-4 right-4">
-                      <span className="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        {project.category}
-                      </span>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative">
+              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 md:p-12 border border-white/20">
+                <div className="text-center">
+                  <div className="flex justify-center mb-6">
+                    {[...Array(testimonials[currentTestimonial].rating)].map(
+                      (_, i) => (
+                        <Star
+                          key={i}
+                          className="w-6 h-6 text-yellow-400 fill-current"
+                        />
+                      )
+                    )}
                   </div>
 
-                  <div className="p-6">
-                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-emerald-300 transition-colors duration-300">
-                      {project.title}
-                    </h3>
+                  <blockquote className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed italic">
+                    "{testimonials[currentTestimonial].content}"
+                  </blockquote>
 
-                    <p className="text-white/80 mb-4 leading-relaxed">
-                      {project.description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-emerald-400 font-semibold">
-                        {project.impact}
-                      </span>
-                      <button className="text-white/60 hover:text-emerald-400 transition-colors duration-300">
-                        <svg
-                          className="w-6 h-6"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                          />
-                        </svg>
-                      </button>
+                  <div className="flex items-center justify-center space-x-4">
+                    <img
+                      src={testimonials[currentTestimonial].image}
+                      alt={testimonials[currentTestimonial].name}
+                      className="w-16 h-16 rounded-full object-cover border-2 border-emerald-400"
+                    />
+                    <div className="text-left">
+                      <h4 className="text-lg font-bold text-white">
+                        {testimonials[currentTestimonial].name}
+                      </h4>
+                      <p className="text-emerald-300">
+                        {testimonials[currentTestimonial].role}
+                      </p>
+                      <p className="text-white/60 text-sm">
+                        {testimonials[currentTestimonial].location}
+                      </p>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Navigation buttons */}
+              <button
+                onClick={prevTestimonial}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-emerald-500/20 hover:bg-emerald-500/40 rounded-full p-3 transition-all duration-300"
+              >
+                <ChevronLeft className="w-6 h-6 text-white" />
+              </button>
+              <button
+                onClick={nextTestimonial}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-emerald-500/20 hover:bg-emerald-500/40 rounded-full p-3 transition-all duration-300"
+              >
+                <ChevronRight className="w-6 h-6 text-white" />
+              </button>
+
+              {/* Dots indicator */}
+              <div className="flex justify-center mt-8 space-x-2">
+                {testimonials.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentTestimonial(idx)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      idx === currentTestimonial
+                        ? "bg-emerald-400"
+                        : "bg-white/30"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Us Section */}
+        <section ref={contactRef} className="relative py-24 ">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-4xl md:text-6xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+              Contact Us
+            </h2>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-8">
+                  Get in Touch
+                </h3>
+                <p className="text-white/80 mb-8 text-lg leading-relaxed">
+                  Ready to join our mission for a sustainable future? We'd love
+                  to hear from you. Whether you're interested in our projects,
+                  want to become a member, or need more information, don't
+                  hesitate to reach out.
+                </p>
+
+                <div className="space-y-8">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-emerald-500/20 rounded-full p-3">
+                      <Mail className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <div>
+                      {/* <h4 className="text-white font-semibold">Email</h4> */}
+                      <p className="text-white/70">info@greendoors.org</p>
+                      <p className="text-white/70">contact@greendoors.org</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-emerald-500/20 rounded-full p-3">
+                      <Phone className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <div>
+                      {/* <h4 className="text-white font-semibold">Phone</h4> */}
+                      <p className="text-white/70">+880 1234-567890</p>
+                      <p className="text-white/70">+880 1987-654321</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center lg:items-start space-x-4 col-span-2  ">
+                    <div className="bg-emerald-500/20 rounded-full p-3">
+                      <MapPin className="w-6 h-6 text-emerald-400" />
+                    </div>
+                    <div className="">
+                      {/* <h4 className="text-white font-semibold">Address</h4> */}
+                      <p className="text-white/70  ">
+                        Green Doors Association, 123 Sustainability Street, Eco
+                        District, Dhaka 1000 ,Bangladesh
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-12">
+                  <h4 className="text-white font-semibold mb-4">
+                    Office Hours
+                  </h4>
+                  <div className="space-y-2 text-white/70">
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                    <p>Saturday: 10:00 AM - 4:00 PM</p>
+                    <p>Sunday: Closed</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+                <h3 className="text-2xl font-bold text-white mb-6">
+                  Send us a Message
+                </h3>
+                <form className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">
+                        First Name
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-emerald-400 focus:outline-none transition-colors"
+                        placeholder="Your first name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">
+                        Last Name
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-emerald-400 focus:outline-none transition-colors"
+                        placeholder="Your last name"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-emerald-400 focus:outline-none transition-colors"
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-emerald-400 focus:outline-none transition-colors"
+                      placeholder="Message subject"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">
+                      Message
+                    </label>
+                    <textarea
+                      rows={5}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:border-emerald-400 focus:outline-none transition-colors resize-none"
+                      placeholder="Your message here..."
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-emerald-500 to-blue-500 text-white font-bold py-3 rounded-lg hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500"
+                  >
+                    Send Message
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="relative py-16 bg-slate-900 border-t border-white/10">
+        <footer className="relative py-16 border-t border-white/10">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <h3 className="text-3xl font-bold text-white mb-4">
               Ready to Make a Difference?

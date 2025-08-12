@@ -53,13 +53,6 @@ const AddDepositForm = () => {
     e.preventDefault();
 
     try {
-      // const formData = new FormData();
-      // Object.entries(form).forEach(([key, value]) => {
-      //   if (value !== null && value !== undefined && value !== "") {
-      //     formData.append(key, value);
-      //   }
-      // });
-
       const result = await addDeposit(form).unwrap();
       console.log("Deposit added successfully:", result);
       toast.success("Deposit added successfully!");

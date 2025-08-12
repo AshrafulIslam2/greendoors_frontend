@@ -163,7 +163,6 @@ export default function Home() {
     const animateContent = () => {
       // Kill any existing animations to prevent conflicts
       gsap.killTweensOf(".metric-card");
-      gsap.killTweensOf(".quick-actions");
       gsap.killTweensOf(".dashboard-header");
 
       // Set initial states WITHOUT opacity: 0 (cards stay visible)
@@ -172,7 +171,6 @@ export default function Home() {
         scale: 0.95,
         rotation: -2,
       });
-      gsap.set(".quick-actions", { y: 20 });
 
       // Create timeline for better control
       const tl = gsap.timeline();
@@ -204,17 +202,6 @@ export default function Home() {
           ease: "back.out(1.1)",
         },
         "-=0.5"
-      );
-
-      // Quick actions animation
-      tl.to(
-        ".quick-actions",
-        {
-          y: 0,
-          duration: 0.6,
-          ease: "power2.out",
-        },
-        "-=0.4"
       );
 
       // Add hover animations after initial animation completes
@@ -268,7 +255,6 @@ export default function Home() {
 
       // Kill animations
       gsap.killTweensOf(".metric-card");
-      gsap.killTweensOf(".quick-actions");
       gsap.killTweensOf(".dashboard-header");
 
       // Remove event listeners
@@ -338,7 +324,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div
               className="quick-actions bg-white/90 backdrop-blur-sm rounded-3xl p-6 lg:p-8 shadow-xl border border-gray-200/50"
-              style={{ opacity: 0, transform: "translateY(30px)" }}
+              style={{ opacity: 1, transform: "translateY(30px)" }}
             >
               <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6 text-center">
                 Quick Actions

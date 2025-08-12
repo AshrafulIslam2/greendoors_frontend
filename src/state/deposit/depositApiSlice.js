@@ -13,7 +13,13 @@ export const depositApiSlice = createApi({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: [{ type: "Deposit", id: "LIST" }],
+      invalidatesTags: (result, error, arg) => [
+        { type: "Deposit", id: "LIST" },
+        { type: "Deposit", id: "CASH_BALANCE" },
+        ...(arg?.memberId
+          ? [{ type: "Deposit", id: `CASH_BALANCE_${arg.memberId}` }]
+          : []),
+      ],
     }),
 
     // Get All Deposits (GET /deposit?page=1&limit=10)
@@ -42,14 +48,17 @@ export const depositApiSlice = createApi({
         url: `/deposit/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "Deposit", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Deposit", id: "LIST" },
+        "Deposit", // This will invalidate all deposit-related queries including getUserDeposits
+      ],
     }),
 
     // Get Cash Balance for Association (POST /deposit/cashbalance)
     getCashBalance: builder.query({
       query: () => ({
         url: "/deposit/cashbalance",
-        method: "POST",
+        method: "GET",
       }),
       providesTags: [{ type: "Deposit", id: "CASH_BALANCE" }],
     }),
@@ -58,11 +67,20 @@ export const depositApiSlice = createApi({
     getMemberCashBalance: builder.query({
       query: (memberId) => ({
         url: `/deposit/cashbalance/${memberId}`,
-        method: "POST",
+        method: "GET",
       }),
       providesTags: (result, error, arg) => [
         { type: "Deposit", id: `CASH_BALANCE_${arg}` },
       ],
+    }),
+
+    // Get Deposits for Logged-in User (GET /deposits/me?page=1&limit=10)
+    getUserDeposits: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: `/deposit/me?page=${page}&limit=${limit}`,
+        method: "GET",
+      }),
+      providesTags: ["Deposit"],
     }),
   }),
 });
@@ -74,4 +92,5 @@ export const {
   useGetCashBalanceQuery,
   useGetMemberCashBalanceQuery,
   useDeleteDepositByIdMutation,
+  useGetUserDepositsQuery,
 } = depositApiSlice;
