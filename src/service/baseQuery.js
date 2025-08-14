@@ -3,7 +3,8 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { getSession } from "next-auth/react";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3200",
+  // baseUrl: "http://147.79.70.138:3200/",
+  baseUrl: process.env.NEXT_PUBLIC_API_URL,
   prepareHeaders: async (headers, { getState, endpoint }) => {
     // Check if endpoint is public
     const isPublicEndpoint =
