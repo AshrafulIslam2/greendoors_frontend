@@ -1,13 +1,11 @@
 import NextAuth from "next-auth";
 
-import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { getUserFromDb } from "./utils/getUserFromDb";
-import { ZodError } from "zod";
+
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Google,
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
