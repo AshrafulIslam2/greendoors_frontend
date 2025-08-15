@@ -101,7 +101,7 @@ const Sidebar = () => {
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <div className="bg-gray-800 rounded-lg p-4">
             <button
-              onClick={() => signOut({ callbackUrl: "/login" })}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="w-full flex items-center justify-center gap-2 text-gray-200 text-sm font-medium bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition-all duration-200"
             >
               <LogOut className="w-4 h-4" />

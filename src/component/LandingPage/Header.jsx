@@ -50,7 +50,7 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-8">
             {[
               "How It Works",
               "Opportunities",
@@ -75,12 +75,19 @@ const Header = () => {
           {/* CTA Button - Desktop */}
           <div className="hidden lg:block">
             {session ? (
-              <button
-                className="gradient-gold cursor-pointer text-white font-semibold py-2 px-4 rounded transition-colors"
-                onClick={() => signOut()}
-              >
-                Logout
-              </button>
+              <div className="space-x-4 ">
+                <Link href="/dashboard">
+                  <button className="bg-brand-teal cursor-pointer text-white font-semibold py-2 px-4 rounded transition-colors">
+                    Dashboard
+                  </button>
+                </Link>
+                <button
+                  className="gradient-gold cursor-pointer text-white font-semibold py-2 px-4 rounded transition-colors"
+                  onClick={() => signOut()}
+                >
+                  Logout
+                </button>
+              </div>
             ) : (
               <Link href="/login">
                 <button className="gradient-gold cursor-pointer text-white font-semibold py-2 px-4 rounded transition-colors">
@@ -126,11 +133,19 @@ const Header = () => {
               ))}
               <div className="px-6 pt-2">
                 {session ? (
-                  <Link href="/login">
-                    <button className="w-full gradient-gold  cursor-pointer hover:opacity-90 text-white font-semibold py-3 rounded-lg transition-all duration-200">
+                  <div className="space-x-4 ">
+                    <Link href="/dashboard">
+                      <button className="bg-brand-teal cursor-pointer text-white font-semibold py-2 px-4 rounded transition-colors">
+                        Dashboard
+                      </button>
+                    </Link>
+                    <button
+                      className="gradient-gold cursor-pointer text-white font-semibold py-2 px-4 rounded transition-colors"
+                      onClick={() => signOut()}
+                    >
                       Logout
                     </button>
-                  </Link>
+                  </div>
                 ) : (
                   <Link href="/login">
                     <button className="w-full gradient-gold cursor-pointer hover:opacity-90 text-white font-semibold py-3 rounded-lg transition-all duration-200">
