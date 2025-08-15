@@ -46,7 +46,7 @@ const EditPersonalInformationForm = ({ defaultValues = {} }) => {
     const { name, value, files, type } = e.target;
     if (type === "file" && files[0]) {
       const file = files[0];
-      const maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+      const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
       if (file.size > maxFileSize) {
         toast.error(
           `${
@@ -55,7 +55,7 @@ const EditPersonalInformationForm = ({ defaultValues = {} }) => {
               : name === "nidImageFrontPart"
               ? "Front NID image"
               : "Back NID image"
-          } exceeds 2MB limit.`
+          } exceeds 5MB limit.`
         );
         e.target.value = ""; // Clear the input
         return;
@@ -69,19 +69,19 @@ const EditPersonalInformationForm = ({ defaultValues = {} }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    const maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+    const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
     setIsSubmitting(true);
     // Validate file sizes again (redundant but ensures robustness)
     if (form.ProfileImage && form.ProfileImage.size > maxFileSize) {
-      toast.error("Profile image exceeds 2MB limit.");
+      toast.error("Profile image exceeds 5MB limit.");
       return;
     }
     if (form.nidImageFrontPart && form.nidImageFrontPart.size > maxFileSize) {
-      toast.error("Front NID image exceeds 2MB limit.");
+      toast.error("Front NID image exceeds 5MB limit.");
       return;
     }
     if (form.nidImageBackPart && form.nidImageBackPart.size > maxFileSize) {
-      toast.error("Back NID image exceeds 2MB limit.");
+      toast.error("Back NID image exceeds 5MB limit.");
       return;
     }
 

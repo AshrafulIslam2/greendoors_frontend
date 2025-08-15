@@ -51,15 +51,15 @@ const EditNomineeInformationForm = ({ onSubmit, defaultValues = {} }) => {
     e.preventDefault();
     setIsSubmitting(true);
     const formData = new FormData();
-    const maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+    const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
 
     // Validate file sizes before appending
     if (form.nidImageFrontPart && form.nidImageFrontPart.size > maxFileSize) {
-      toast.error("Front NID image exceeds 2MB limit.");
+      toast.error("Front NID image exceeds 5MB limit.");
       return;
     }
     if (form.nidImageBackPart && form.nidImageBackPart.size > maxFileSize) {
-      toast.error("Back NID image exceeds 2MB limit.");
+      toast.error("Back NID image exceeds 5MB limit.");
       return;
     }
     Object.entries(form).forEach(([key, value]) => {
