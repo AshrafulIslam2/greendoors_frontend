@@ -68,7 +68,7 @@ export default function Home() {
     data: associationBalance,
     isLoading: associationLoading,
     error: associationError,
-  } = useGetCashBalanceQuery();
+  } = useGetCashBalanceQuery({ skip: session?.user?.role === "MEMBER" });
 
   const {
     data: memberBalance,
@@ -84,7 +84,7 @@ export default function Home() {
     cashBalanceData = associationBalance;
     cashBalanceLoading = associationLoading;
     cashBalanceError = associationError;
-  } else if (session?.user?.memberId) {
+  } else if (session?.user?.role === "MEMBER") {
     cashBalanceData = memberBalance;
     cashBalanceLoading = memberLoading;
     cashBalanceError = memberError;
@@ -94,14 +94,38 @@ export default function Home() {
         title: key,
         value,
       }))
+    : cashBalanceData?.status === "fail" && session?.user?.role === "MEMBER"
+    ? [
+        { title: "totalDeposit", value: 0 },
+        { title: "totalProfit", value: 0 },
+        { title: "totalLateFee", value: 0 },
+        { title: "totalLoss", value: 0 },
+        { title: "availableCash", value: 0 },
+      ]
     : [];
 
-  const filteredCashBalanceArray = cashBalanceArray.filter(
-    (item) =>
-      item.title !== "id" &&
-      item.title !== "updatedAt" &&
-      item.title !== "memberId"
-  );
+  const filteredCashBalanceArray = cashBalanceArray.filter((item) => {
+    // Basic filtering - exclude these fields for all users
+    if (
+      item.title === "id" ||
+      item.title === "updatedAt" ||
+      item.title === "memberId"
+    ) {
+      return false;
+    }
+
+    // Additional filtering for MEMBER role
+    if (session?.user?.role === "MEMBER") {
+      const memberExcludedFields = [
+        "totalExpense",
+        "totalInvestment",
+        "totalRegistrationFee",
+      ];
+      return !memberExcludedFields.includes(item.title);
+    }
+
+    return true;
+  });
   console.log(
     "🚀 ~ Home ~ filteredCashBalanceArray:",
     filteredCashBalanceArray
@@ -294,15 +318,15 @@ export default function Home() {
               Array.from({ length: 6 }).map((_, index) => (
                 <LoadingSkeleton key={index} />
               ))
-            ) : cashBalanceError ? (
-              // Show error state
+            ) : cashBalanceError && cashBalanceData?.status !== "fail" ? (
+              // Show error state only for actual errors, not "no record found"
               <div className="col-span-full text-center py-8">
                 <p className="text-red-500 text-lg">
                   Error loading financial data. Please try again.
                 </p>
               </div>
             ) : filteredCashBalanceArray.length > 0 ? (
-              // Show actual data
+              // Show actual data or zero values
               filteredCashBalanceArray.map((metric, index) => (
                 <MetricCard
                   key={index}
@@ -312,7 +336,7 @@ export default function Home() {
                 />
               ))
             ) : (
-              // Show empty state
+              // Fallback for unexpected cases
               Array.from({ length: 6 }).map((_, index) => (
                 <LoadingSkeleton key={index} />
               ))

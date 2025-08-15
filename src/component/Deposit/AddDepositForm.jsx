@@ -66,11 +66,21 @@ const AddDepositForm = () => {
       console.error("Failed to add deposit:", error);
     }
   };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      // Prevent default if not in textarea or if shift is not pressed
+      if (e.target.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        handleSubmit(e);
+      }
+    }
+  };
 
   return (
     <form
       className="grid grid-cols-1 md:grid-cols-2 gap-8"
       onSubmit={handleSubmit}
+      onKeyDown={handleKeyDown}
       encType="multipart/form-data"
     >
       {/* Error message */}

@@ -18,6 +18,7 @@ const PAGE_SIZE = 10;
 
 const Deposit = () => {
   const [page, setPage] = useState(1);
+  console.log("🚀 ~ Deposit ~ page:", page);
   const { data: session } = useSession();
 
   const [filterYear, setFilterYear] = useState("");
@@ -50,6 +51,7 @@ const Deposit = () => {
   const totalCount = depositsData?.pagination?.totalCount || 0;
 
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+  console.log("🚀 ~ Deposit ~ totalPages:", totalPages);
 
   // Get unique years for filtering (from current data)
   const uniqueYears = [
@@ -208,10 +210,7 @@ const Deposit = () => {
                   )}
 
                   <td className="px-4 py-2 font-semibold text-emerald-800">
-                    ৳{" "}
-                    {Number(
-                      deposit.amount - deposit.lateFeeAmount || 0
-                    ).toLocaleString()}
+                    ৳ {Number(deposit.amount || 0).toLocaleString()}
                   </td>
                   <td className="px-4 py-2">
                     {deposit.depositDate
@@ -281,52 +280,56 @@ const Deposit = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
-        <button
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-          disabled={page === 1}
-          className="px-3 py-1 rounded bg-emerald-100 text-emerald-700 font-bold disabled:opacity-50"
-        >
-          Prev
-        </button>
+      {/* {
+        totalPages <= 1 ? null : ()
+      } */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 py-1 rounded bg-emerald-100 text-emerald-700 font-bold disabled:opacity-50"
+          >
+            Prev
+          </button>
 
-        {/* Show page numbers */}
-        {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
-          let pageNum;
-          if (totalPages <= 5) {
-            pageNum = i + 1;
-          } else if (page <= 3) {
-            pageNum = i + 1;
-          } else if (page >= totalPages - 2) {
-            pageNum = totalPages - 4 + i;
-          } else {
-            pageNum = page - 2 + i;
-          }
+          {/* Show page numbers */}
+          {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
+            let pageNum;
+            if (totalPages <= 5) {
+              pageNum = i + 1;
+            } else if (page <= 3) {
+              pageNum = i + 1;
+            } else if (page >= totalPages - 2) {
+              pageNum = totalPages - 4 + i;
+            } else {
+              pageNum = page - 2 + i;
+            }
 
-          return (
-            <button
-              key={pageNum}
-              onClick={() => setPage(pageNum)}
-              className={`px-3 py-1 rounded font-bold ${
-                page === pageNum
-                  ? "bg-emerald-500 text-white"
-                  : "bg-emerald-50 text-emerald-700"
-              }`}
-            >
-              {pageNum}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={pageNum}
+                onClick={() => setPage(pageNum)}
+                className={`px-3 py-1 rounded font-bold ${
+                  page === pageNum
+                    ? "bg-emerald-500 text-white"
+                    : "bg-emerald-50 text-emerald-700"
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
 
-        <button
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          disabled={page === totalPages}
-          className="px-3 py-1 rounded bg-emerald-100 text-emerald-700 font-bold disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages || totalPages === 0}
+            className="px-3 py-1 rounded bg-emerald-100 text-emerald-700 font-bold disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
       {/* Show pagination info */}
       <div className="text-center mt-4 text-sm text-gray-600">
         Showing {(page - 1) * PAGE_SIZE + 1} to{" "}

@@ -10,6 +10,17 @@ const Model = ({ children, modelTitle }) => {
   const dispatch = useDispatch();
   const overlayRef = useRef(null);
   const modalRef = useRef(null);
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && isModelOpen) {
+        handleClose();
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isModelOpen]);
 
   useEffect(() => {
     if (isModelOpen) {
@@ -50,6 +61,8 @@ const Model = ({ children, modelTitle }) => {
     <>
       {isModelOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
           ref={overlayRef}
           className="w-full bg-black/35 backdrop-blur-sm h-full fixed top-0 left-0 flex items-center justify-center z-50"
           onClick={handleClose}
